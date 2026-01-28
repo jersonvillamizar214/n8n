@@ -3417,7 +3417,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "=CITA GUARDADA!\n\nID: {{ $json.id_cita }}\nFecha: {{ $json.fecha }}\nHora: {{ $json.hora }}\n\n1. Volver Agenda\n2. Menu principal",
+        "text": "=CITA GUARDADA!\n\nID: {{ $json.id_cita }}\nFecha: {{ $json.fecha }}\nHora: {{ $json.hora }}\n\n(Regresando al menú principal...)",
         "additionalFields": {}
       },
       "id": "74691aff-3e2d-4bcd-87c7-8048be646da0",
@@ -3455,7 +3455,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla": "agenda_menu",
+            "pantalla": "menu_principal",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -4411,6 +4411,17 @@
       "main": [
         [
           {
+            "node": "Update After Cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update After Cita": {
+      "main": [
+        [
+          {
             "node": "Cita OK",
             "type": "main",
             "index": 0
@@ -4422,7 +4433,7 @@
       "main": [
         [
           {
-            "node": "Update After Cita",
+            "node": "Send Menu Principal",
             "type": "main",
             "index": 0
           }
