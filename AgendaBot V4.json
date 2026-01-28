@@ -16,7 +16,6 @@
         -1776,
         208
       ],
-      "webhookId": "94cad43a-cc4a-4430-97fb-b9f527dfd46a",
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -1734,7 +1733,6 @@
         464,
         368
       ],
-      "webhookId": "cce13465-b126-418c-be37-3eacc0309437",
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -3317,9 +3315,57 @@
           "assignments": [
             {
               "id": "1",
-              "name": "cita_data",
-              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}') }}",
-              "type": "object"
+              "name": "id_cita",
+              "value": "={{ 'CITA-' + Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "fecha",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}').fecha }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "hora",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}').hora }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "nombre",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}').nombre }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "motivo",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}').motivo }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "canal",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}').canal }}",
+              "type": "string"
+            },
+            {
+              "id": "7",
+              "name": "estado",
+              "value": "pendiente",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "creado_por",
+              "value": "={{ String($('Set Variables').item.json.telegram_user) }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "timestamp_creacion",
+              "value": "={{ $('Set Variables').item.json.timestamp }}",
+              "type": "string"
             }
           ]
         },
@@ -3348,18 +3394,8 @@
           "mode": "name"
         },
         "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id_cita": "={{ 'CITA-' + Date.now() }}",
-            "fecha": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).fecha; } catch(e) { return ''; } })() }}",
-            "hora": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).hora; } catch(e) { return ''; } })() }}",
-            "nombre": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).nombre; } catch(e) { return ''; } })() }}",
-            "motivo": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).motivo; } catch(e) { return ''; } })() }}",
-            "canal": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).canal; } catch(e) { return ''; } })() }}",
-            "estado": "pendiente",
-            "creado_por": "={{ String($('Set Variables').item.json.telegram_user) }}",
-            "timestamp_creacion": "={{ $('Set Variables').item.json.timestamp }}"
-          }
+          "mappingMode": "autoMapInputData",
+          "value": {}
         },
         "options": {}
       },
@@ -4416,12 +4452,5 @@
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": false
-  },
-  "versionId": "7ea79864-a955-4bd3-90d3-3f4471248f7e",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "a74dc42e6c5ca97d2639d20dfe9d674c69893a3626b425d9b90997a40e92c34e"
-  },
-  "id": "Vlp6rzXqhw8UqtNf",
-  "tags": []
+  }
 }
