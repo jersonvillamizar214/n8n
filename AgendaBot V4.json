@@ -3350,7 +3350,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id_cita": "CITA-{{ $now.toMillis() }}",
+            "id_cita": "={{ 'CITA-' + Date.now() }}",
             "fecha": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).fecha; } catch(e) { return ''; } })() }}",
             "hora": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).hora; } catch(e) { return ''; } })() }}",
             "nombre": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).nombre; } catch(e) { return ''; } })() }}",
