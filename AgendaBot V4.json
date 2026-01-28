@@ -292,7 +292,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $json.telegram_user }}",
-            "pantalla_actual": "={{ $json.pantalla_actual }}",
+            "pantalla": "={{ $json.pantalla_actual }}",
             "paso_actual": "={{ $json.paso_actual }}",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $json.timestamp }}"
@@ -498,7 +498,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $json.telegram_user }}",
-            "pantalla_actual": "menu_principal",
+            "pantalla": "menu_principal",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $json.timestamp }}"
@@ -641,6 +641,36 @@
               },
               "renameOutput": true,
               "outputKey": "bienvenida"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mensaje }}",
+                    "rightValue": "reset",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "leftValue": "={{ $json.mensaje }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              },
+              "renameOutput": true,
+              "outputKey": "inicio"
             },
             {
               "conditions": {
@@ -1201,7 +1231,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_menu",
+            "pantalla": "agenda_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}",
@@ -1329,7 +1359,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "tareas_menu",
+            "pantalla": "tareas_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1396,7 +1426,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "recordatorios_menu",
+            "pantalla": "recordatorios_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1463,7 +1493,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "habitos_menu",
+            "pantalla": "habitos_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1530,7 +1560,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "listas_menu",
+            "pantalla": "listas_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1597,7 +1627,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "reportes_menu",
+            "pantalla": "reportes_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1664,7 +1694,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "config_menu",
+            "pantalla": "config_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1731,7 +1761,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "admin_menu",
+            "pantalla": "admin_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1820,7 +1850,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "ayuda_menu",
+            "pantalla": "ayuda_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -1906,7 +1936,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "menu_principal",
+            "pantalla": "menu_principal",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -2058,7 +2088,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_1",
+            "pantalla": "agenda_crear_paso_1",
             "paso_actual": "1",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -2445,7 +2475,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_2",
+            "pantalla": "agenda_crear_paso_2",
             "paso_actual": "2",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -2562,7 +2592,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), hora: $('Set Variables').item.json.mensaje }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), hora: $('Set Variables').item.json.mensaje }) }}",
               "type": "string"
             }
           ]
@@ -2619,7 +2649,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_3",
+            "pantalla": "agenda_crear_paso_3",
             "paso_actual": "3",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -2705,7 +2735,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), nombre: $('Set Variables').item.json.mensaje }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), nombre: $('Set Variables').item.json.mensaje }) }}",
               "type": "string"
             }
           ]
@@ -2762,7 +2792,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_4",
+            "pantalla": "agenda_crear_paso_4",
             "paso_actual": "4",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -2826,7 +2856,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), motivo: $('Set Variables').item.json.mensaje }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), motivo: $('Set Variables').item.json.mensaje }) }}",
               "type": "string"
             }
           ]
@@ -2883,7 +2913,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_5",
+            "pantalla": "agenda_crear_paso_5",
             "paso_actual": "5",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -3000,6 +3030,28 @@
               },
               "renameOutput": true,
               "outputKey": "llamada"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
             }
           ]
         },
@@ -3023,7 +3075,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Presencial' }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), canal: 'Presencial' }) }}",
               "type": "string"
             }
           ]
@@ -3046,7 +3098,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Virtual' }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), canal: 'Virtual' }) }}",
               "type": "string"
             }
           ]
@@ -3069,7 +3121,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Llamada' }) }}",
+              "value": "={{ JSON.stringify({ ...JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}'), canal: 'Llamada' }) }}",
               "type": "string"
             }
           ]
@@ -3126,7 +3178,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_crear_paso_6",
+            "pantalla": "agenda_crear_paso_6",
             "paso_actual": "6",
             "datos_parciales": "={{ $json.datos_parciales }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -3221,6 +3273,28 @@
               },
               "renameOutput": true,
               "outputKey": "cancelar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
             }
           ]
         },
@@ -3244,7 +3318,7 @@
             {
               "id": "1",
               "name": "cita_data",
-              "value": "={{ JSON.parse($json.datos_parciales || '{}') }}",
+              "value": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales || '{}') }}",
               "type": "object"
             }
           ]
@@ -3265,27 +3339,25 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "mode": "id",
-          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
         },
         "sheetName": {
           "__rl": true,
-          "mode": "list",
-          "value": 0,
-          "cachedResultName": "CITAS",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=0"
+          "value": "CITAS",
+          "mode": "name"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "id_cita": "=CITA-{{ Date.now() }}",
-            "fecha": "={{ $json.cita_data.fecha }}",
-            "hora": "={{ $json.cita_data.hora }}",
-            "nombre": "={{ $json.cita_data.nombre }}",
-            "motivo": "={{ $json.cita_data.motivo }}",
-            "canal": "={{ $json.cita_data.canal }}",
+            "id_cita": "CITA-{{ $now.toMillis() }}",
+            "fecha": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).fecha; } catch(e) { return ''; } })() }}",
+            "hora": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).hora; } catch(e) { return ''; } })() }}",
+            "nombre": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).nombre; } catch(e) { return ''; } })() }}",
+            "motivo": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).motivo; } catch(e) { return ''; } })() }}",
+            "canal": "={{ (() => { try { return JSON.parse($('Merge Session Data').item.json.datos_parciales).canal; } catch(e) { return ''; } })() }}",
             "estado": "pendiente",
-            "creado_por": "={{ $('Set Variables').item.json.telegram_user }}",
+            "creado_por": "={{ String($('Set Variables').item.json.telegram_user) }}",
             "timestamp_creacion": "={{ $('Set Variables').item.json.timestamp }}"
           }
         },
@@ -3347,7 +3419,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
-            "pantalla_actual": "agenda_menu",
+            "pantalla": "agenda_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
@@ -3545,6 +3617,13 @@
         ],
         [
           {
+            "node": "Send Bienvenida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Menu Principal Router",
             "type": "main",
             "index": 0
@@ -3560,13 +3639,6 @@
         [
           {
             "node": "Agenda Wizard Router",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Volver Router",
             "type": "main",
             "index": 0
           }
@@ -4165,13 +4237,6 @@
       "main": [
         [
           {
-            "node": "Send Agenda Menu",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
             "node": "Set Presencial",
             "type": "main",
             "index": 0
@@ -4187,6 +4252,13 @@
         [
           {
             "node": "Set Llamada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Agenda Menu",
             "type": "main",
             "index": 0
           }
@@ -4261,6 +4333,13 @@
         [
           {
             "node": "Send Agenda Paso 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Agenda Menu",
             "type": "main",
             "index": 0
           }
