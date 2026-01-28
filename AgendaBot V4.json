@@ -1,0 +1,4348 @@
+{
+  "name": "AgendaBot V4",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "ade53e99-6b87-45be-bc16-1841caf96043",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -1776,
+        208
+      ],
+      "webhookId": "94cad43a-cc4a-4430-97fb-b9f527dfd46a",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "telegram_user",
+              "name": "telegram_user",
+              "value": "={{ String($json.message.from.id) }}",
+              "type": "string"
+            },
+            {
+              "id": "username",
+              "name": "username",
+              "value": "={{ $json.message.from.first_name || $json.message.from.username || 'Usuario' }}",
+              "type": "string"
+            },
+            {
+              "id": "mensaje",
+              "name": "mensaje",
+              "value": "={{ ($json.message.text || '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "chat_id",
+              "name": "chat_id",
+              "value": "={{ String($json.message.chat.id) }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "83112ff7-275f-4371-a42c-ae4b85752764",
+      "name": "Set Variables",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1536,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit?usp=drivesdk",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "=telegram_user",
+              "lookupValue": "={{ $json.telegram_user }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "91dedf5e-f9e2-4883-99f8-ea822a5f332a",
+      "name": "Get Session",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1328,
+        208
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "session-exists",
+              "leftValue": "={{ $json.pantalla_actual }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2351bd0d-d257-4e6f-b9cf-2a1381fbedc5",
+      "name": "Session Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1104,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "telegram_user",
+              "name": "telegram_user",
+              "value": "={{ $('Set Variables').item.json.telegram_user }}",
+              "type": "string"
+            },
+            {
+              "id": "chat_id",
+              "name": "chat_id",
+              "value": "={{ $('Set Variables').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "mensaje",
+              "name": "mensaje",
+              "value": "={{ $('Set Variables').item.json.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "username",
+              "name": "username",
+              "value": "={{ $('Set Variables').item.json.username }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $('Set Variables').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "pantalla_actual",
+              "name": "pantalla_actual",
+              "value": "={{ $json.pantalla_actual || 'menu_principal' }}",
+              "type": "string"
+            },
+            {
+              "id": "paso_actual",
+              "name": "paso_actual",
+              "value": "={{ $json.paso_actual || '0' }}",
+              "type": "string"
+            },
+            {
+              "id": "datos_parciales",
+              "name": "datos_parciales",
+              "value": "={{ $json.datos_parciales || '{}' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "104b327e-b287-4c61-9439-ddd65a24e5a1",
+      "name": "Merge Session Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "telegram_user",
+              "name": "telegram_user",
+              "value": "={{ $('Set Variables').item.json.telegram_user }}",
+              "type": "string"
+            },
+            {
+              "id": "chat_id",
+              "name": "chat_id",
+              "value": "={{ $('Set Variables').item.json.chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "mensaje",
+              "name": "mensaje",
+              "value": "={{ $('Set Variables').item.json.mensaje }}",
+              "type": "string"
+            },
+            {
+              "id": "username",
+              "name": "username",
+              "value": "={{ $('Set Variables').item.json.username }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $('Set Variables').item.json.timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "pantalla_actual",
+              "name": "pantalla_actual",
+              "value": "nuevo_usuario",
+              "type": "string"
+            },
+            {
+              "id": "paso_actual",
+              "name": "paso_actual",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "datos_parciales",
+              "name": "datos_parciales",
+              "value": "{}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "343ea660-93ec-44d4-8ca4-b5080bf6080c",
+      "name": "Set New User Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 319260215,
+          "mode": "list",
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hotrf-91CoJyrer3T8fgQzWAZaC6NZn-FfVSDZtKUn8/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $json.telegram_user }}",
+            "pantalla_actual": "={{ $json.pantalla_actual }}",
+            "paso_actual": "={{ $json.paso_actual }}",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $json.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telegram_user",
+              "displayName": "telegram_user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pantalla_actual",
+              "displayName": "pantalla_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "paso_actual",
+              "displayName": "paso_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "datos_parciales",
+              "displayName": "datos_parciales",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp_ultima_interaccion",
+              "displayName": "timestamp_ultima_interaccion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "5ee31d35-9cef-4ff6-bb40-8cb3516d759d",
+      "name": "Create New Session",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -656,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2000502643,
+          "mode": "list",
+          "cachedResultName": "LOGS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hotrf-91CoJyrer3T8fgQzWAZaC6NZn-FfVSDZtKUn8/edit#gid=2000502643"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "telegram_user": "={{ $json.telegram_user }}",
+            "pantalla": "={{ $json.pantalla_actual }}",
+            "opcion_elegida": "={{ $json.mensaje }}",
+            "resultado": "procesando"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "telegram_user",
+              "displayName": "telegram_user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pantalla",
+              "displayName": "pantalla",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "opcion_elegida",
+              "displayName": "opcion_elegida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "resultado",
+              "displayName": "resultado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "333b23cd-6ff0-4046-bc27-56ab301a86eb",
+      "name": "Log Interaction",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -448,
+        208
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "=Hola {{ $json.username }}, soy AgendaBot 👋\n\nEstoy aquí para ayudarte a organizar tus citas, tareas y recordatorios de forma sencilla y sin complicaciones.\n\nPuedes escribirme en cualquier momento.\nPara avanzar, solo tienes que escribir el número de la opción que quieras usar.\n\nMenú principal:\n0. Ayuda\n1. Agenda (citas)\n2. Tareas\n3. Recordatorios\n4. Hábitos\n5. Listas\n6. Reportes\n7. Configuración\n8. Administrador\n\n💡 Tip: escribe solo el número (ej: 1) y presiona enviar.",
+        "additionalFields": {}
+      },
+      "id": "1cdfbf8d-da32-48ff-8c83-9207e332a5b8",
+      "name": "Send Bienvenida",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -1344
+      ],
+      "webhookId": "40628ee4-c0d7-41e8-868a-6714b571035a",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 319260215,
+          "mode": "list",
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hotrf-91CoJyrer3T8fgQzWAZaC6NZn-FfVSDZtKUn8/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $json.telegram_user }}",
+            "pantalla_actual": "menu_principal",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ],
+          "schema": [
+            {
+              "id": "telegram_user",
+              "displayName": "telegram_user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pantalla_actual",
+              "displayName": "pantalla_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "paso_actual",
+              "displayName": "paso_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "datos_parciales",
+              "displayName": "datos_parciales",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp_ultima_interaccion",
+              "displayName": "timestamp_ultima_interaccion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "97554e5e-18b9-407f-9c35-b9ccb4d5806e",
+      "name": "Update Session to Menu",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        784,
+        -1392
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fcf71e05-8000-4cf2-bc68-c48b3f232755",
+              "name": "=telegram_user",
+              "value": "={{ $('Set Variables').item.json.telegram_user }}",
+              "type": "string"
+            },
+            {
+              "id": "78e868ab-851a-4b9c-81a6-79cfb640560d",
+              "name": "timestamp",
+              "value": "={{ $('Set Variables').item.json.timestamp }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        -1392
+      ],
+      "id": "e1b49b49-8e0c-43e2-bf0d-0ec8d4b09fb3",
+      "name": "Prepare Update Data"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "nuevo_usuario",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "78ae880b-7907-4375-ba18-175e41ba057f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "bienvenida"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "menu_principal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "46d39ddb-d57d-49de-83d0-2b2de8613b20"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "menu_principal"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8efa232e-9513-44cf-85d5-516eebcc9339"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "1eeaf8e8-f782-4d21-a504-88d6049dc594"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda_wizard"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "tareas_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "68f4f53e-5398-4e8b-8df7-e751e9e4a927"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tareas_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "habitos_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c94dec9f-13e2-4ff4-b4eb-e0c7a9eacdbb"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habitos_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "listas_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "acfd0fd7-8ca3-4e8c-9532-9feb7dfe9e99"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "listas_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "recordatorios_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "eba92eb3-0f47-4ef0-82c4-4e7d1a276cc6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "recordatorios_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "reportes_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f9f5b1cf-eeed-4f59-a238-687aea491b5d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reportes_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "config_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cb04c32b-2d72-48bc-8df1-bfcf70f52e9b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "config_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "admin_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ff5f693e-9967-489c-935a-2c4ef27a74ff"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "admin_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "ayuda_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ayuda-menu-condition"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ayuda_menu"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "472a7cbc-0efe-4e75-a906-20b2c16283a6",
+      "name": "Router Principal",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -144,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ayuda"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tareas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "recordatorios"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habitos"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "listas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "6",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "reportes"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "7",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "config"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "8",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "admin"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "953d4d04-81cd-4a7e-868e-029cebd4979f",
+      "name": "Menu Principal Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "AYUDA - AgendaBot\n\nAgenda: Gestiona citas\nTareas: Pendientes\nRecordatorios: No olvides nada\nHabitos: Rutinas\nListas: Organiza items\nReportes: Resumen\n\n9. Volver al menu",
+        "additionalFields": {}
+      },
+      "id": "2a01a260-bc87-4a71-87c0-132ecffefc62",
+      "name": "Send Ayuda",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -1136
+      ],
+      "webhookId": "2c99b8a0-e5e8-4668-9000-345f26006eb3",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "AGENDA\n\n1. Agendar cita\n2. Consultar agenda\n3. Reprogramar\n4. Cancelar\n5. Completar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "be05148c-ec7f-4462-bd9d-744e68fb8c34",
+      "name": "Send Agenda Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -976
+      ],
+      "webhookId": "b638330f-35a7-4398-806e-7fc06d94f707",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ],
+          "schema": [
+            {
+              "id": "telegram_user",
+              "displayName": "telegram_user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pantalla_actual",
+              "displayName": "pantalla_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "paso_actual",
+              "displayName": "paso_actual",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "datos_parciales",
+              "displayName": "datos_parciales",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp_ultima_interaccion",
+              "displayName": "timestamp_ultima_interaccion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "734fe192-240d-49a1-abe2-3d2248a93745",
+      "name": "Update to Agenda Menu",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -976
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "TAREAS\n\n1. Crear tarea\n2. Ver pendientes\n3. Ver completadas\n4. Completar\n5. Eliminar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "2a5044d4-3bf2-4201-aa80-9b0d6aee1892",
+      "name": "Send Tareas Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -800
+      ],
+      "webhookId": "4700a0c5-c904-4103-8d94-d4e046dee0d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "tareas_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "54ea54c4-7f9d-40d0-b187-83567fc00290",
+      "name": "Update to Tareas Menu",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -800
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "RECORDATORIOS\n\n1. Crear\n2. Ver activos\n3. Cancelar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "7c942629-23a0-4936-b1bd-8c3f92f05475",
+      "name": "Send Recordatorios Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -608
+      ],
+      "webhookId": "3757fc82-0378-4216-830b-b73941efbf5e",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "recordatorios_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "b1d4ff0c-ef58-4207-b37a-599ae4c85b9f",
+      "name": "Update to Recordatorios",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        688,
+        -608
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "HABITOS\n\n1. Crear\n2. Ver\n3. Pausar\n4. Reactivar\n5. Eliminar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "573ae914-f6b6-42d3-b38c-366173145d08",
+      "name": "Send Habitos Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        -416
+      ],
+      "webhookId": "dc65c4be-26df-48bd-ba1e-84086a142a8b",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "habitos_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "49818afa-e8b9-442e-a8da-8b62c269f0e0",
+      "name": "Update to Habitos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        -416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "LISTAS\n\n1. Crear\n2. Ver\n3. Agregar item\n4. Completar item\n5. Eliminar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "dad49a30-1a3e-41a7-9379-d978e2edc610",
+      "name": "Send Listas Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -224
+      ],
+      "webhookId": "c046e4ab-d9dc-4590-ac6d-6e8cfb6797c0",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "listas_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "93cbd5bb-5a08-4c8f-92a0-4fc1f92513ae",
+      "name": "Update to Listas",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        688,
+        -224
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "REPORTES\n\n1. Dia\n2. Semana\n3. Citas mes\n4. Tareas completadas\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "8af3f1ee-6cce-405e-b055-2ae59934053a",
+      "name": "Send Reportes Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -32
+      ],
+      "webhookId": "44b9fd01-c18f-4118-8896-f052638f35cf",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "reportes_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "fa6f9583-68a8-4c5b-8e67-e9f463871206",
+      "name": "Update to Reportes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        720,
+        -32
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "CONFIG\n\n1. Zona horaria\n2. Recordatorios on/off\n3. Mi info\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "8ae3514c-9725-4f3e-86d0-755e369f4594",
+      "name": "Send Config Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        176
+      ],
+      "webhookId": "feff8cb3-3df3-44f4-81b7-51cf70a0d814",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "config_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "48ab2103-2077-4d8b-949b-d07dfd528002",
+      "name": "Update to Config",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        688,
+        176
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "ADMIN\n\n1. Usuarios\n2. Agregar\n3. Bloquear\n4. Logs\n5. Exportar\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "6b57c8ab-12fc-42ec-bc2c-513bd8cbdecf",
+      "name": "Send Admin Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        368
+      ],
+      "webhookId": "cce13465-b126-418c-be37-3eacc0309437",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "admin_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "dd852406-f017-4655-80d6-e779c42197ba",
+      "name": "Update to Admin",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        704,
+        368
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Opcion no valida. Escribe 0-8.",
+        "additionalFields": {}
+      },
+      "id": "d9de2cca-6400-4b81-b252-1d17d2754ce0",
+      "name": "Send Invalid Option",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        560
+      ],
+      "webhookId": "65fa2ff9-5e6c-4c68-8883-e1ac385a2597",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "MENU\n0. Ayuda\n1. Agenda\n2. Tareas\n3. Recordatorios\n4. Habitos\n5. Listas\n6. Reportes\n7. Config\n8. Admin",
+        "additionalFields": {}
+      },
+      "id": "665fb8c9-01f8-4baf-bcbb-4e06271a90b6",
+      "name": "Send Menu Principal",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -416
+      ],
+      "webhookId": "45631ab8-208d-4386-bd31-3c9222a55563",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "ayuda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-ayuda-menu-id",
+      "name": "Update to Ayuda",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -1136
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "ayuda-menu-router-id",
+      "name": "Ayuda Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "menu_principal",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "9dc77801-34e0-4d81-beef-ac533fcdaa1b",
+      "name": "Update Volver Menu",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1152,
+        -416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crear_cita"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "consultar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "9366d02c-2b2f-4587-acba-904b072be1a0",
+      "name": "Agenda Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "CREAR CITA - Paso 1/6\n\nFecha? (YYYY-MM-DD)\nEj: 2025-12-20\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "a5ffb9b3-00f1-4b8a-997e-dec25424d6e2",
+      "name": "Send Agenda Paso 1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        432,
+        768
+      ],
+      "webhookId": "4d888603-60fe-40d4-a4a4-166e31b410e5",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_1",
+            "paso_actual": "1",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "137c6990-d4bf-4243-975d-92e821a18382",
+      "name": "Update Agenda Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        688,
+        768
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "creado_por",
+              "lookupValue": "={{ $('Set Variables').item.json.telegram_user }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ab9531f2-4fd5-4c8d-b39c-dea66ee205a2",
+      "name": "Get Citas Usuario",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        464,
+        976
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "=TUS CITAS:\n\n{{ $json.fecha ? $json.fecha + ' ' + $json.hora + ' - ' + $json.nombre : 'Sin citas' }}\n\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "49e4515b-c10b-4a97-b171-43a0b68f6f5b",
+      "name": "Send Consultar Citas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        960
+      ],
+      "webhookId": "1952b1bd-5052-4cc8-961f-42e179c4571a",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Opcion no valida. 1-5 o 9.",
+        "additionalFields": {}
+      },
+      "id": "051a5b0d-82dd-49fc-990e-79d9ea9b3212",
+      "name": "Send Invalid Agenda",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        1104
+      ],
+      "webhookId": "6f9d5ea2-acb6-42b6-a022-387d52c3be48",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso5"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_crear_paso_6",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "paso6"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "9df78cee-d249-474b-af39-00702934a9d8",
+      "name": "Agenda Wizard Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "9",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f80bbc31-cf02-498a-ae50-f2b0f02f09a1",
+      "name": "Cancelar?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        1248
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "^\\d{4}-\\d{2}-\\d{2}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "998d93c3-f8f9-4c0c-b2cf-ceaaaefcc07a",
+      "name": "Validar Fecha",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ fecha: $('Set Variables').item.json.mensaje }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b01ed6d6-ba09-45ec-8854-e48ec9dc659d",
+      "name": "Set Fecha",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        1248
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Paso 2/6 - Hora? (HH:MM)\nEj: 14:30\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "2b9895c4-b230-4041-a0c1-0bd449e94540",
+      "name": "Send Paso 2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        1248
+      ],
+      "webhookId": "3d76f4b0-6f25-4756-870d-31c32026135c",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "92ff4702-55bd-4ddf-a4a2-a7f2887cef99",
+      "name": "Update Paso 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1296,
+        1248
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Formato incorrecto. Usa YYYY-MM-DD\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "773774e5-0591-40cf-b951-8e164945e4ec",
+      "name": "Error Fecha",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        1456
+      ],
+      "webhookId": "54a4fb6c-28d6-4844-8d32-e72234220063",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "9",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dfd58f5a-3871-4859-a535-c00c550b0dff",
+      "name": "Cancelar 2?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        1552
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "^\\d{2}:\\d{2}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "562d9cbb-30ee-4c2e-bed8-cd8c2abdfb3e",
+      "name": "Validar Hora",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        1648
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), hora: $('Set Variables').item.json.mensaje }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ffeeb057-80fd-4868-a472-21a34107dea6",
+      "name": "Set Hora",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        1552
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Paso 3/6 - Nombre cliente?\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "ad8536a0-715f-4dfd-b08b-e0919f8467f7",
+      "name": "Send Paso 3",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        1552
+      ],
+      "webhookId": "c40e0757-23e2-4dba-a99c-f0e157b4c9d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_3",
+            "paso_actual": "3",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "3d9c7410-f84a-4b64-94ec-89d48f36b637",
+      "name": "Update Paso 3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1296,
+        1552
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Formato incorrecto. Usa HH:MM\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "6d93494b-c733-4ea7-92fc-918b92c1efb9",
+      "name": "Error Hora",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        1744
+      ],
+      "webhookId": "10302139-a3a5-47f0-b855-4bef2988b9ba",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "9",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "0690f10a-6f48-4cf7-ae0a-420ad9bc44f4",
+      "name": "Cancelar 3?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), nombre: $('Set Variables').item.json.mensaje }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "313185fd-5a4f-4a1f-aa00-e5110d0b3709",
+      "name": "Set Nombre",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Paso 4/6 - Motivo?\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "229d2973-03f3-4cb8-8b83-7195d46d8248",
+      "name": "Send Paso 4",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        1872
+      ],
+      "webhookId": "529d9a9d-eb7b-401a-8fbf-56bd175e5eb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_4",
+            "paso_actual": "4",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "d6166d4f-a817-42a3-864a-3c0ee32166f6",
+      "name": "Update Paso 4",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1056,
+        1872
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+              "rightValue": "9",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d4563362-18e4-47c5-9807-9ee6a1bea02d",
+      "name": "Cancelar 4?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), motivo: $('Set Variables').item.json.mensaje }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "59ebd691-6e00-4049-ad79-12cd710877e7",
+      "name": "Set Motivo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Paso 5/6 - Canal?\n\n1. Presencial\n2. Virtual\n3. Llamada\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "c8d26c25-f889-4e26-b933-dad6c5fcfa3d",
+      "name": "Send Paso 5",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        2160
+      ],
+      "webhookId": "0de5a313-d9ea-4d93-a1fe-00ad758d9464",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_5",
+            "paso_actual": "5",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "236c9872-b056-4c75-b6d8-d1f513b594b9",
+      "name": "Update Paso 5",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1056,
+        2160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "presencial"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "virtual"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "llamada"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "40fca1bb-156c-456a-a8fd-ba28d2b81221",
+      "name": "Canal Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        2464
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Presencial' }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "939de95b-3a78-43ac-99f4-a90dafb47954",
+      "name": "Set Presencial",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2368
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Virtual' }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "bde13dbd-6d21-4275-aba3-a5bc452b4a60",
+      "name": "Set Virtual",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2464
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "datos_parciales",
+              "value": "={{ JSON.stringify({ ...JSON.parse($json.datos_parciales || '{}'), canal: 'Llamada' }) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "da42b70d-8ce4-4201-a9d0-fdfbbd621d6f",
+      "name": "Set Llamada",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2560
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "=Paso 6/6 - CONFIRMAR:\n\n{{ (() => { try { const d = JSON.parse($('Update Paso 6').item.json.datos_parciales || '{}'); return 'Fecha: ' + d.fecha + '\\nHora: ' + d.hora + '\\nCliente: ' + d.nombre + '\\nMotivo: ' + d.motivo + '\\nCanal: ' + d.canal; } catch(e) { return 'Error'; } })() }}\n\n1. Confirmar\n2. Editar\n3. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "29a666a5-0468-4ea8-92b9-a07d03ff27e7",
+      "name": "Send Paso 6",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        2464
+      ],
+      "webhookId": "794d2796-36be-421d-a174-2eb212240e6b",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_crear_paso_6",
+            "paso_actual": "6",
+            "datos_parciales": "={{ $json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "359e89d4-97d8-4305-a346-cefd04b1e107",
+      "name": "Update Paso 6",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1056,
+        2464
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirmar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "editar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "5339456e-d8e4-43ce-bf94-a2fa4d6a7922",
+      "name": "Confirmar Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        336,
+        2768
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "cita_data",
+              "value": "={{ JSON.parse($json.datos_parciales || '{}') }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d59b70fa-146f-4b6a-af4f-544cf9996499",
+      "name": "Parse Cita",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_cita": "=CITA-{{ Date.now() }}",
+            "fecha": "={{ $json.cita_data.fecha }}",
+            "hora": "={{ $json.cita_data.hora }}",
+            "nombre": "={{ $json.cita_data.nombre }}",
+            "motivo": "={{ $json.cita_data.motivo }}",
+            "canal": "={{ $json.cita_data.canal }}",
+            "estado": "pendiente",
+            "creado_por": "={{ $('Set Variables').item.json.telegram_user }}",
+            "timestamp_creacion": "={{ $('Set Variables').item.json.timestamp }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "8555f362-9d9d-40d5-af5d-118b48c608f9",
+      "name": "Guardar Cita",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        816,
+        2672
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "=CITA GUARDADA!\n\nID: {{ $json.id_cita }}\nFecha: {{ $json.fecha }}\nHora: {{ $json.hora }}\n\n1. Volver Agenda\n2. Menu principal",
+        "additionalFields": {}
+      },
+      "id": "74691aff-3e2d-4bcd-87c7-8048be646da0",
+      "name": "Cita OK",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        2672
+      ],
+      "webhookId": "19d6e4db-a355-472d-95bf-8f8c23659a80",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=319260215"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "8ac67c95-22c8-434f-92c0-2ea3f624d114",
+      "name": "Update After Cita",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1296,
+        2672
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "9a4480e7-7ed0-4d21-b5cb-a5d6fe5f54db",
+      "name": "Volver Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        96,
+        3072
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variables": {
+      "main": [
+        [
+          {
+            "node": "Get Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Session": {
+      "main": [
+        [
+          {
+            "node": "Session Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Exists?": {
+      "main": [
+        [
+          {
+            "node": "Merge Session Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set New User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Session Data": {
+      "main": [
+        [
+          {
+            "node": "Log Interaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set New User Data": {
+      "main": [
+        [
+          {
+            "node": "Create New Session",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Session": {
+      "main": [
+        [
+          {
+            "node": "Log Interaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Interaction": {
+      "main": [
+        [
+          {
+            "node": "Router Principal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Bienvenida": {
+      "main": [
+        [
+          {
+            "node": "Prepare Update Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Update Data": {
+      "main": [
+        [
+          {
+            "node": "Update Session to Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router Principal": {
+      "main": [
+        [
+          {
+            "node": "Send Bienvenida",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Menu Principal Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agenda Menu Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agenda Wizard Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Volver Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ayuda Menu Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update to Ayuda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Ayuda": {
+      "main": [
+        [
+          {
+            "node": "Update to Ayuda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ayuda Menu Router": {
+      "main": [
+        [
+          {
+            "node": "Send Menu Principal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu Principal Router": {
+      "main": [
+        [
+          {
+            "node": "Send Ayuda",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Recordatorios Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Habitos Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Listas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Reportes Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Config Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Admin Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Agenda Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Tareas Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Recordatorios Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Recordatorios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Habitos Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Habitos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Listas Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Listas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Reportes Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Reportes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Config Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Admin Menu": {
+      "main": [
+        [
+          {
+            "node": "Update to Admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Menu Principal": {
+      "main": [
+        [
+          {
+            "node": "Update Volver Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agenda Menu Router": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Paso 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Citas Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Menu Principal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Agenda Paso 1": {
+      "main": [
+        [
+          {
+            "node": "Update Agenda Paso 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Citas Usuario": {
+      "main": [
+        [
+          {
+            "node": "Send Consultar Citas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agenda Wizard Router": {
+      "main": [
+        [
+          {
+            "node": "Cancelar?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancelar 2?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancelar 3?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancelar 4?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Canal Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Confirmar Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelar?": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validar Fecha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Fecha": {
+      "main": [
+        [
+          {
+            "node": "Set Fecha",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Fecha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fecha": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Paso 2": {
+      "main": [
+        [
+          {
+            "node": "Send Paso 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Paso 2": {
+      "main": [
+        []
+      ]
+    },
+    "Cancelar 2?": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validar Hora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Hora": {
+      "main": [
+        [
+          {
+            "node": "Set Hora",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Hora",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Hora": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Paso 3": {
+      "main": [
+        [
+          {
+            "node": "Send Paso 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Paso 3": {
+      "main": [
+        []
+      ]
+    },
+    "Cancelar 3?": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Nombre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Nombre": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Paso 4": {
+      "main": [
+        [
+          {
+            "node": "Send Paso 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Paso 4": {
+      "main": [
+        []
+      ]
+    },
+    "Cancelar 4?": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Motivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Motivo": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Paso 5": {
+      "main": [
+        [
+          {
+            "node": "Send Paso 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Paso 5": {
+      "main": [
+        []
+      ]
+    },
+    "Canal Router": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Presencial",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Virtual",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Llamada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Presencial": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Virtual": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Llamada": {
+      "main": [
+        [
+          {
+            "node": "Update Paso 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Paso 6": {
+      "main": [
+        [
+          {
+            "node": "Send Paso 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Paso 6": {
+      "main": [
+        []
+      ]
+    },
+    "Confirmar Router": {
+      "main": [
+        [
+          {
+            "node": "Parse Cita",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Agenda Paso 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Cita": {
+      "main": [
+        [
+          {
+            "node": "Guardar Cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Cita": {
+      "main": [
+        [
+          {
+            "node": "Cita OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cita OK": {
+      "main": [
+        [
+          {
+            "node": "Update After Cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Volver Router": {
+      "main": [
+        [
+          {
+            "node": "Send Menu Principal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "7ea79864-a955-4bd3-90d3-3f4471248f7e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a74dc42e6c5ca97d2639d20dfe9d674c69893a3626b425d9b90997a40e92c34e"
+  },
+  "id": "Vlp6rzXqhw8UqtNf",
+  "tags": []
+}
