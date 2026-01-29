@@ -6295,6 +6295,132 @@
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pantalla_actual": "reprogramar_cita",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "name": "Update Session Reprogramar Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1152,
+        11024
+      ],
+      "id": "session-reprogramar-paso-1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pantalla_actual": "cancelar_cita",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "name": "Update Session Cancelar Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1152,
+        12224
+      ],
+      "id": "session-cancelar-paso-1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pantalla_actual": "completar_cita",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "name": "Update Session Completar Cita Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1152,
+        13024
+      ],
+      "id": "session-completar-paso-1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "pinData": {},
