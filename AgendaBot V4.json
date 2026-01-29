@@ -3959,6 +3959,7 @@
       "name": "Send Tareas Pendientes",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -3424,
         12016
@@ -4024,6 +4025,7 @@
       "name": "Send Tareas Completadas",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -3424,
         12128
@@ -4871,6 +4873,7 @@
       "name": "Send Lista Para Completar",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -1360,
         9616
@@ -5104,6 +5107,7 @@
       "name": "Send Lista Para Eliminar",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -1360,
         10224
@@ -5402,6 +5406,7 @@
       "name": "Send Lista Para Reprogramar",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -1360,
         11024
@@ -5791,6 +5796,7 @@
       "name": "Send Lista Para Cancelar",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -1360,
         12224
@@ -6106,6 +6112,7 @@
       "name": "Send Lista Para Completar Cita",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
+      "executeOnce": true,
       "position": [
         -1360,
         13024
@@ -6418,6 +6425,566 @@
         13024
       ],
       "id": "session-completar-paso-1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ (() => { const msg = $('Set Variables').item.json.mensaje; const num = parseInt(msg); const citas = JSON.parse($json.datos_parciales).citas || []; return !isNaN(num) && num >= 1 && num <= citas.length; })() }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valida"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "name": "Reprogramar Cita Selection Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        11024
+      ],
+      "id": "router-reprogramar-selection"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ (() => { const msg = $('Set Variables').item.json.mensaje; const num = parseInt(msg); const citas = JSON.parse($json.datos_parciales).citas || []; return !isNaN(num) && num >= 1 && num <= citas.length; })() }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valida"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "name": "Cancelar Cita Selection Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        12224
+      ],
+      "id": "router-cancelar-selection"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
+                    "rightValue": "0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancelar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ (() => { const msg = $('Set Variables').item.json.mensaje; const num = parseInt(msg); const citas = JSON.parse($json.datos_parciales).citas || []; return !isNaN(num) && num >= 1 && num <= citas.length; })() }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "valida"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "name": "Completar Cita Selection Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        13024
+      ],
+      "id": "router-completar-selection"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "reprogramar_cita",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify({...JSON.parse($('Merge Session Data').item.json.datos_parciales), cita_seleccionada: parseInt($('Set Variables').item.json.mensaje) - 1}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update Session Reprogramar Paso 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -736,
+        11024
+      ],
+      "id": "session-reprogramar-paso-2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "reprogramar_cita",
+            "paso_actual": "3",
+            "datos_parciales": "={{ JSON.stringify({...JSON.parse($('Merge Session Data').item.json.datos_parciales), fecha_nueva: $('Set Variables').item.json.mensaje}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update Session Reprogramar Paso 3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -528,
+        11024
+      ],
+      "id": "session-reprogramar-paso-3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "CITAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_cita": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales).citas[JSON.parse($('Merge Session Data').item.json.datos_parciales).cita_seleccionada].id_cita }}",
+            "fecha": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales).fecha_nueva }}",
+            "hora": "={{ $('Set Variables').item.json.mensaje }}"
+          },
+          "matchingColumns": [
+            "id_cita"
+          ]
+        },
+        "options": {}
+      },
+      "name": "Update Cita Reprogramada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        11024
+      ],
+      "id": "update-cita-reprogramada",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update After Reprogramar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -112,
+        11024
+      ],
+      "id": "update-after-reprogramar",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "cancelar_cita",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify({...JSON.parse($('Merge Session Data').item.json.datos_parciales), cita_seleccionada: parseInt($('Set Variables').item.json.mensaje) - 1}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update Session Cancelar Paso 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -736,
+        12224
+      ],
+      "id": "session-cancelar-paso-2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "CITAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_cita": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales).citas[JSON.parse($('Merge Session Data').item.json.datos_parciales).cita_seleccionada].id_cita }}",
+            "estado": "cancelada"
+          },
+          "matchingColumns": [
+            "id_cita"
+          ]
+        }
+      },
+      "name": "Update Cita Cancelada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        12224
+      ],
+      "id": "update-cita-cancelada",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update After Cancelar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -112,
+        12224
+      ],
+      "id": "update-after-cancelar",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "CITAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_cita": "={{ JSON.parse($('Merge Session Data').item.json.datos_parciales).citas[parseInt($('Set Variables').item.json.mensaje) - 1].id_cita }}",
+            "estado": "completada"
+          },
+          "matchingColumns": [
+            "id_cita"
+          ]
+        }
+      },
+      "name": "Marcar Cita Como Completada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -320,
+        13024
+      ],
+      "id": "marcar-cita-completada",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "0",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        }
+      },
+      "name": "Update After Completar Cita",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -112,
+        13024
+      ],
+      "id": "update-after-completar-cita",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "fZ7jIZOfX6ts7GKS",
@@ -8266,6 +8833,72 @@
         [
           {
             "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Reprogramar Paso 1": {
+      "main": [
+        [
+          {
+            "node": "Reprogramar Cita Selection Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Reprogramar Paso 2": {
+      "main": [
+        [
+          {
+            "node": "Validar Nueva Fecha Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Reprogramar Paso 3": {
+      "main": [
+        [
+          {
+            "node": "Validar Nueva Hora Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Cancelar Paso 1": {
+      "main": [
+        [
+          {
+            "node": "Cancelar Cita Selection Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Cancelar Paso 2": {
+      "main": [
+        [
+          {
+            "node": "Confirmar Cancelar Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Session Completar Cita Paso 1": {
+      "main": [
+        [
+          {
+            "node": "Completar Cita Selection Router",
             "type": "main",
             "index": 0
           }
