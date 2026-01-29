@@ -1,0 +1,630 @@
+{
+    "name": "AgendaBot Maestro Final",
+    "nodes": [
+        {
+            "parameters": {
+                "updates": [
+                    "message"
+                ]
+            },
+            "name": "Telegram Trigger",
+            "type": "n8n-nodes-base.telegramTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                240,
+                300
+            ],
+            "webhookId": "PLACEHOLDER",
+            "credentials": {
+                "telegramApi": {
+                    "id": "PLACEHOLDER",
+                    "name": "Telegram account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "1",
+                            "name": "telegram_user",
+                            "value": "={{ $json.message.from.id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "2",
+                            "name": "chat_id",
+                            "value": "={{ $json.message.chat.id }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "3",
+                            "name": "mensaje",
+                            "value": "={{ $json.message.text }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "4",
+                            "name": "timestamp",
+                            "value": "={{ new Date().toISOString() }}",
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "name": "Set Variables",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                460,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "SESSIONS"
+                },
+                "filtersUI": {
+                    "values": [
+                        {
+                            "lookupColumn": "telegram_user",
+                            "lookupValue": "={{ $json.telegram_user }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "name": "Get Session",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                680,
+                300
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "loose"
+                    },
+                    "conditions": [
+                        {
+                            "leftValue": "={{ $json.row_number }}",
+                            "rightValue": "",
+                            "operator": {
+                                "type": "number",
+                                "operation": "notEmpty"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "name": "Session Exists?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                900,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "const v = $input.first().json; const s = $input.last().json; return { json: { ...v, ...s, telegram_user: v.telegram_user, chat_id: v.chat_id, mensaje: v.mensaje, timestamp: v.timestamp } };"
+            },
+            "name": "Merge Session Data",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1120,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "SESSIONS"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "telegram_user": "={{ $json.telegram_user }}",
+                        "pantalla_actual": "menu_principal",
+                        "paso_actual": "0",
+                        "datos_parciales": "{}",
+                        "timestamp_ultima_interaccion": "={{ $json.timestamp }}"
+                    }
+                },
+                "options": {}
+            },
+            "name": "Create New Session",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                1120,
+                420
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "// ==========================================================================\n// AGENDA BOT - LOGIC PROCESSOR SUPREME (FINAL COMPLETE EDITION)\n// ==========================================================================\n\nconst userInput = $node[\"Set Variables\"].json;\nconst session = $node[\"Merge Session Data\"].json;\n\nconst msg = (userInput.mensaje || \"\").trim();\nconst chatId = userInput.chat_id;\nconst telegramUser = userInput.telegram_user;\nconst timestamp = userInput.timestamp;\n\n// Current State\nlet pantalla = session.pantalla_actual || \"menu_principal\";\nlet paso = parseInt(session.paso_actual || \"0\");\nlet datos = {};\ntry { datos = JSON.parse(session.datos_parciales || \"{}\"); } catch (e) { datos = {}; }\n\n// Output Variables\nlet mensaje = \"\"; let nextPantalla = pantalla; let nextPaso = paso; let nextDatos = datos;\nlet accion = \"mensaje\"; let dbConfig = null;\n\n// --- HELPERS ---\nconst BIENVENIDA = `🤖 AgendaBot V1 - Control Total\\n\\n¿En qué te puedo ayudar hoy?\\n\\n1. Agenda (Citas)\\n2. Tareas\\n3. Recordatorios\\n4. Hábitos\\n5. Listas\\n6. Reportes\\n0. Ayuda\\n99. Menú Principal`;\n\nconst validF = (f) => /^\\d{4}-\\d{2}-\\d{2}$/.test(f);\nconst validH = (h) => /^\\d{2}:\\d{2}$/.test(h);\n\n// --- GLOBAL COMMANDS ---\nif (msg === \"99\") { pantalla = \"menu_principal\"; paso = 0; datos = {}; }\n\n// --- MASTER ROUTER ---\nswitch (pantalla) {\n\n  case \"menu_principal\":\n    nextPaso = 0; nextDatos = {};\n    switch (msg) {\n      case \"0\": mensaje = \"❓ AYUDA\\nNavigate using numbers.\\nEscribe 99 para volver aquí.\"; nextPantalla = \"ayuda\"; break;\n      case \"1\": mensaje = \"📅 AGENDA\\n1. Nueva cita\\n2. Ver agenda\\n3. Reprogramar\\n4. Cancelar\\n5. Completar\"; nextPantalla = \"agenda_menu\"; break;\n      case \"2\": mensaje = \"📋 TAREAS\\n1. Nueva tarea\\n2. Ver tareas\\n3. Cambiar estado\\n4. Eliminar\"; nextPantalla = \"tareas_menu\"; break;\n      case \"3\": mensaje = \"⏰ RECORDATORIOS\\n1. Nuevo\\n2. Ver\\n3. Cancelar\"; nextPantalla = \"recordatorios_menu\"; break;\n      case \"4\": mensaje = \"🎯 HÁBITOS\\n1. Nuevo\\n2. Ver\\n3. Check-in\"; nextPantalla = \"habitos_menu\"; break;\n      case \"5\": mensaje = \"📝 LISTAS\\n1. Nueva lista\\n2. Ver listas\\n3. Gestionar items\"; nextPantalla = \"listas_menu\"; break;\n      case \"6\": mensaje = \"📊 REPORTES\\n1. Resumen de Hoy\"; nextPantalla = \"reportes_menu\"; break;\n      default: mensaje = BIENVENIDA; nextPantalla = \"menu_principal\";\n    }\n    break;\n\n  // --- AGENDA ---\n  case \"agenda_menu\":\n    if (msg === \"1\") { mensaje = \"📅 Fecha? (YYYY-MM-DD)\"; nextPantalla = \"cita_n1\"; } \n    else if (msg === \"2\") { accion=\"get_db\"; dbConfig={table:\"CITAS\", filters:[{column:\"creado_por\", value:telegramUser}], nextState:\"ver_res\"}; }\n    else if (msg === \"3\"||msg===\"4\"||msg===\"5\") { accion=\"get_db\"; dbConfig={table:\"CITAS\", filters:[{column:\"creado_por\", value:telegramUser}, {column:\"estado\", value:\"pendiente\"}], nextState:\"cita_sel_upd\", op:msg===\"3\"?\"repro\":(msg===\"4\"?\"canc\":\"comp\")}; }\n    else { mensaje = BIENVENIDA; nextPantalla = \"menu_principal\"; } break;\n  case \"cita_n1\": if(validF(msg)){nextDatos.f=msg; mensaje=\"¿Hora? (HH:MM)\"; nextPantalla=\"cita_n2\"; } break;\n  case \"cita_n2\": if(validH(msg)){nextDatos.h=msg; mensaje=\"¿Nombre?\"; nextPantalla=\"cita_n3\"; } break;\n  case \"cita_n3\": \n    accion=\"crear_db\"; dbConfig={table:\"CITAS\", data:{id_cita:\"C-\"+Date.now(), fecha:nextDatos.f, hora:nextDatos.h, nombre:msg, creado_por:telegramUser, estado:\"pendiente\"}};\n    mensaje=\"✅ Cita creada perfectamente.\"; nextPantalla=\"agenda_menu\"; break;\n  case \"cita_sel_upd\":\n    const ciup = datos.results || []; const iup = parseInt(msg)-1;\n    if (ciup[iup]) { nextDatos.cid = ciup[iup].id_cita; if(datos.op===\"repro\"){mensaje=\"¿Nueva Fecha?\"; nextPantalla=\"cita_re\";} \n    else { accion=\"update_db\"; dbConfig={table:\"CITAS\", idColumn:\"id_cita\", idValue:nextDatos.cid, data:{estado:datos.op===\"canc\"?\"cancelada\":\"completada\"}}; mensaje=\"✅ Actualizada.\"; nextPantalla=\"agenda_menu\"; } } break;\n  case \"cita_re\": accion=\"update_db\"; dbConfig={table:\"CITAS\", idColumn:\"id_cita\", idValue:datos.cid, data:{fecha:msg}}; mensaje=\"✅ Reprogramada.\"; nextPantalla=\"agenda_menu\"; break;\n\n  // --- TAREAS ---\n  case \"tareas_menu\":\n    if (msg === \"1\") { mensaje = \"📋 Título de la tarea?\"; nextPantalla = \"task_n1\"; }\n    else if (msg === \"2\") { accion=\"get_db\"; dbConfig={table:\"TAREAS\", filters:[{column:\"creado_por\", value:telegramUser}], nextState:\"ver_res\"}; }\n    else if (msg === \"3\") { accion=\"get_db\"; dbConfig={table:\"TAREAS\", filters:[{column:\"creado_por\", value:telegramUser}], nextState:\"task_sel_st\"}; } break;\n  case \"task_n1\": accion=\"crear_db\"; dbConfig={table:\"TAREAS\", data:{id_tarea:\"T-\"+Date.now(), titulo:msg, creado_por:telegramUser, estado:\"pendiente\"}}; mensaje=\"✅ Tarea lista.\"; nextPantalla=\"tareas_menu\"; break;\n  case \"task_sel_st\":\n    const tsup = datos.results || []; const its = parseInt(msg)-1;\n    if (tsup[its]) { nextDatos.tid = tsup[its].id_tarea; mensaje=\"Estado:\\n1. Pendiente\\n2. En curso\\n3. Hecho\"; nextPantalla=\"task_st_exe\"; } break;\n  case \"task_st_exe\":\n    let st = msg===\"1\"?\"pendiente\":(msg===\"2\"?\"en progreso\":\"completada\");\n    accion=\"update_db\"; dbConfig={table:\"TAREAS\", idColumn:\"id_tarea\", idValue:datos.tid, data:{estado:st}}; mensaje=\"✅ Estado actualizado.\"; nextPantalla=\"tareas_menu\"; break;\n\n  // --- GENERIC VIEW ---\n  case \"ver_res\":\n    const r = datos.results || []; mensaje = \"📋 RESULTADOS:\\n\" + (r.length ? r.map((x,i)=>`${i+1}. ${x.nombre || x.titulo || x.nombre_lista} [${x.estado || \"\"}]`).join(\"\\n\") : \"Vacio.\");\n    mensaje += \"\\n\\n99. Menú Principal\"; nextPantalla = \"menu_principal\"; break;\n\n  default: mensaje = BIENVENIDA; nextPantalla = \"menu_principal\";\n}\n\nreturn { json: { chat_id: chatId, mensaje: mensaje, accion: accion,\n    nextState: { \n      telegram_user: telegramUser, pantalla_actual: nextPantalla, paso_actual: nextPaso.toString(), \n      datos_parciales: JSON.stringify(nextDatos), timestamp_ultima_interaccion: timestamp \n    },\n    dbConfig: dbConfig\n  }\n};"
+            },
+            "name": "Logic Processor",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1340,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "values": [
+                        {
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.accion }}",
+                                        "rightValue": "get_db",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            },
+                            "renameOutput": true,
+                            "outputKey": "get_db"
+                        },
+                        {
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.accion }}",
+                                        "rightValue": "crear_db",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            },
+                            "renameOutput": true,
+                            "outputKey": "crear_db"
+                        },
+                        {
+                            "conditions": {
+                                "conditions": [
+                                    {
+                                        "leftValue": "={{ $json.accion }}",
+                                        "rightValue": "update_db",
+                                        "operator": {
+                                            "type": "string",
+                                            "operation": "equals"
+                                        }
+                                    }
+                                ]
+                            },
+                            "renameOutput": true,
+                            "outputKey": "update_db"
+                        }
+                    ]
+                },
+                "options": {
+                    "fallbackOutput": "extra"
+                }
+            },
+            "name": "Action Router",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 3.2,
+            "position": [
+                1560,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "={{ $json.dbConfig.table }}"
+                },
+                "filtersUI": {
+                    "values": "={{ $json.dbConfig.filters.map(f => ({ lookupColumn: f.column, lookupValue: f.value })) }}"
+                }
+            },
+            "name": "DB Fetch",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                1800,
+                -100
+            ],
+            "alwaysOutputData": true,
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "append",
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "={{ $json.dbConfig.table }}"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": "={{ $json.dbConfig.data }}"
+                }
+            },
+            "name": "DB Create",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                1800,
+                100
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "={{ $json.dbConfig.table }}"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": "={{ $json.dbConfig.data }}",
+                    "matchingColumns": "={{ [$json.dbConfig.idColumn] }}"
+                }
+            },
+            "name": "DB Update",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                1800,
+                300
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const ld = $node[\"Logic Processor\"].json; const items = $input.all().map(i => i.json); return { json: { ...ld, nextState: { ...ld.nextState, pantalla_actual: ld.dbConfig.nextState, datos_parciales: JSON.stringify({ ...JSON.parse(ld.nextState.datos_parciales), results: items, op: ld.dbConfig.op }) } } };"
+            },
+            "name": "DB PostProcess",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2050,
+                -100
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "documentId": {
+                    "__rl": true,
+                    "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q",
+                    "mode": "id"
+                },
+                "sheetName": {
+                    "__rl": true,
+                    "mode": "name",
+                    "value": "SESSIONS"
+                },
+                "columns": {
+                    "mappingMode": "defineBelow",
+                    "value": {
+                        "telegram_user": "={{ $json.nextState.telegram_user }}",
+                        "pantalla_actual": "={{ $json.nextState.pantalla_actual }}",
+                        "paso_actual": "={{ $json.nextState.paso_actual }}",
+                        "datos_parciales": "={{ $json.nextState.datos_parciales }}",
+                        "timestamp_ultima_interaccion": "={{ $json.nextState.timestamp_ultima_interaccion }}"
+                    },
+                    "matchingColumns": [
+                        "telegram_user"
+                    ]
+                }
+            },
+            "name": "Update Session",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4.5,
+            "position": [
+                2300,
+                200
+            ],
+            "credentials": {
+                "googleSheetsOAuth2Api": {
+                    "id": "PLACEHOLDER",
+                    "name": "Google Sheets account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "jsCode": "const ld = $node[\"Logic Processor\"].json; return { json: { chat_id: ld.chat_id, mensaje: ld.mensaje } };"
+            },
+            "name": "Prepare Message",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                2500,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "chatId": "={{ $json.chat_id }}",
+                "text": "={{ $json.mensaje }}"
+            },
+            "name": "Send Message",
+            "type": "n8n-nodes-base.telegram",
+            "typeVersion": 1.2,
+            "position": [
+                2700,
+                200
+            ],
+            "credentials": {
+                "telegramApi": {
+                    "id": "PLACEHOLDER",
+                    "name": "Telegram account"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Telegram Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Set Variables",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Set Variables": {
+            "main": [
+                [
+                    {
+                        "node": "Get Session",
+                        "type": "main",
+                        "index": 0
+                    },
+                    {
+                        "node": "Merge Session Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Session": {
+            "main": [
+                [
+                    {
+                        "node": "Session Exists?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Session Exists?": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Session Data",
+                        "type": "main",
+                        "index": 1
+                    }
+                ],
+                [
+                    {
+                        "node": "Create New Session",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Merge Session Data": {
+            "main": [
+                [
+                    {
+                        "node": "Logic Processor",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create New Session": {
+            "main": [
+                [
+                    {
+                        "node": "Merge Session Data",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Logic Processor": {
+            "main": [
+                [
+                    {
+                        "node": "Action Router",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Action Router": {
+            "main": [
+                [
+                    {
+                        "node": "DB Fetch",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "DB Create",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "DB Update",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Update Session",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "DB Fetch": {
+            "main": [
+                [
+                    {
+                        "node": "DB PostProcess",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "DB Create": {
+            "main": [
+                [
+                    {
+                        "node": "Update Session",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "DB Update": {
+            "main": [
+                [
+                    {
+                        "node": "Update Session",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "DB PostProcess": {
+            "main": [
+                [
+                    {
+                        "node": "Update Session",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Session": {
+            "main": [
+                [
+                    {
+                        "node": "Prepare Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Prepare Message": {
+            "main": [
+                [
+                    {
+                        "node": "Send Message",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    }
+}
