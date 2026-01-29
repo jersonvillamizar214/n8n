@@ -6312,6 +6312,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
             "pantalla_actual": "reprogramar_cita",
             "paso_actual": "1",
             "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
@@ -6354,6 +6355,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
             "pantalla_actual": "cancelar_cita",
             "paso_actual": "1",
             "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
@@ -6396,6 +6398,7 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
             "pantalla_actual": "completar_cita",
             "paso_actual": "1",
             "datos_parciales": "={{ JSON.stringify({citas: $input.all().map(c => c.json)}) }}",
