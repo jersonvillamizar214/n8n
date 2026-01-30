@@ -2340,8 +2340,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "=TUS CITAS:\n\n{{ $json.fecha ? $json.fecha + ' ' + $json.hora + ' - ' + $json.nombre : 'Sin citas' }}\n\n9. Volver",
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
         "additionalFields": {}
       },
       "id": "49e4515b-c10b-4a97-b171-43a0b68f6f5b",
@@ -2349,7 +2349,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        672,
+        776,
         960
       ],
       "webhookId": "1952b1bd-5052-4cc8-961f-42e179c4571a",
@@ -2359,6 +2359,16 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.fecha) {\n  return [{json:{mensaje:'TUS CITAS:\\n\\nNo tienes citas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TUS CITAS:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  t += (i+1)+'. '+items[i].json.fecha+' '+items[i].json.hora+' - '+items[i].json.nombre+'\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+      },
+      "id": "fc1a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5c",
+      "name": "Format Citas Lista",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [568, 960]
     },
     {
       "parameters": {
@@ -6602,6 +6612,17 @@
       ]
     },
     "Get Citas Usuario": {
+      "main": [
+        [
+          {
+            "node": "Format Citas Lista",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Citas Lista": {
       "main": [
         [
           {
