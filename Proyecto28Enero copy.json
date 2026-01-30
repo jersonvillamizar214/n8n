@@ -2587,6 +2587,19 @@
     },
     {
       "parameters": {
+        "jsCode": "const fecha = $('Set Variables').first().json.mensaje;\nconst regex = /^\\d{4}-\\d{2}-\\d{2}$/;\n\nif (!regex.test(fecha)) {\n  return { json: { valid: false, error: 'Formato incorrecto. Usa YYYY-MM-DD', fecha } };\n}\n\nconst fechaIngresada = new Date(fecha + 'T00:00:00');\nconst hoy = new Date();\nhoy.setHours(0, 0, 0, 0);\n\nif (fechaIngresada < hoy) {\n  return { json: { valid: false, error: 'No puedes agendar en una fecha pasada.', fecha } };\n}\n\nreturn { json: { valid: true, fecha } };"
+      },
+      "id": "998d93c3-f8f9-4c0c-b2cf-ceaaaefcc07a",
+      "name": "Validar Fecha",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        1344
+      ]
+    },
+    {
+      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -2595,11 +2608,11 @@
           },
           "conditions": [
             {
-              "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
-              "rightValue": "^\\d{4}-\\d{2}-\\d{2}$",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
               "operator": {
-                "type": "string",
-                "operation": "regex"
+                "type": "boolean",
+                "operation": "equals"
               }
             }
           ],
@@ -2607,12 +2620,12 @@
         },
         "options": {}
       },
-      "id": "998d93c3-f8f9-4c0c-b2cf-ceaaaefcc07a",
-      "name": "Validar Fecha",
+      "id": "if-fecha-valida-node-id",
+      "name": "If Fecha Valida",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        576,
+        800,
         1344
       ]
     },
@@ -2623,7 +2636,7 @@
             {
               "id": "1",
               "name": "datos_parciales",
-              "value": "={{ JSON.stringify({ fecha: $('Set Variables').item.json.mensaje }) }}",
+              "value": "={{ JSON.stringify({ fecha: $('Validar Fecha').first().json.fecha }) }}",
               "type": "string"
             }
           ]
@@ -2708,8 +2721,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "Formato incorrecto. Usa YYYY-MM-DD\n\n9. Cancelar",
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Validar Fecha').first().json.error }}\n\n9. Cancelar",
         "additionalFields": {}
       },
       "id": "773774e5-0591-40cf-b951-8e164945e4ec",
@@ -3158,28 +3171,6 @@
                 "conditions": [
                   {
                     "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
-                    "rightValue": "9",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "cancelar"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "loose"
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
                     "rightValue": "1",
                     "operator": {
                       "type": "string",
@@ -3601,8 +3592,30 @@
           "mode": "name"
         },
         "columns": {
-          "mappingMode": "autoMapInputData",
-          "value": {}
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_cita": "={{ $('Parse Cita').first().json.id_cita }}",
+            "fecha": "={{ $('Parse Cita').first().json.fecha }}",
+            "hora": "={{ $('Parse Cita').first().json.hora }}",
+            "nombre": "={{ $('Parse Cita').first().json.nombre }}",
+            "motivo": "={{ $('Parse Cita').first().json.motivo }}",
+            "canal": "={{ $('Parse Cita').first().json.canal }}",
+            "estado": "={{ $('Parse Cita').first().json.estado }}",
+            "creado_por": "={{ $('Parse Cita').first().json.creado_por }}",
+            "timestamp_creacion": "={{ $('Parse Cita').first().json.timestamp_creacion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "id_cita", "displayName": "id_cita", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "fecha", "displayName": "fecha", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "hora", "displayName": "hora", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "nombre", "displayName": "nombre", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "motivo", "displayName": "motivo", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "canal", "displayName": "canal", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "creado_por", "displayName": "creado_por", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "timestamp_creacion", "displayName": "timestamp_creacion", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
         },
         "options": {}
       },
@@ -5967,6 +5980,105 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "fecha",
+              "lookupValue": "={{ $json.fecha }}"
+            },
+            {
+              "lookupColumn": "hora",
+              "lookupValue": "={{ $json.hora }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-doble-reserva-node-id",
+      "name": "Check Doble Reserva",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        576,
+        2550
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id_cita }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-no-existe-cita-node-id",
+      "name": "If No Existe Cita",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        2550
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=⚠️ Ya existe una cita para el {{ $('Parse Cita').first().json.fecha }} a las {{ $('Parse Cita').first().json.hora }}.\n\nPor favor elige otra fecha u hora.\n\n9. Volver al menú",
+        "additionalFields": {}
+      },
+      "id": "error-doble-reserva-node-id",
+      "name": "Error Doble Reserva",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        2650
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -6575,6 +6687,17 @@
       "main": [
         [
           {
+            "node": "If Fecha Valida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Fecha Valida": {
+      "main": [
+        [
+          {
             "node": "Set Fecha",
             "type": "main",
             "index": 0
@@ -6900,7 +7023,36 @@
       "main": [
         [
           {
+            "node": "Check Doble Reserva",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Doble Reserva": {
+      "main": [
+        [
+          {
+            "node": "If No Existe Cita",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If No Existe Cita": {
+      "main": [
+        [
+          {
             "node": "Guardar Cita",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Doble Reserva",
             "type": "main",
             "index": 0
           }
