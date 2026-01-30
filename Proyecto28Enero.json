@@ -1812,7 +1812,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "={{ $json.pantalla === 'menu_principal' ? 'Opcion no valida. Escribe 0-8.' : 'Opcion no valida. Presiona \"9\" para ir al menú principal.' }}",
+        "text": "={{ $json.pantalla === 'menu_principal' ? 'Opcion no valida. Escribe 0-8.\\n\\nMENU\\n0. Ayuda\\n1. Agenda\\n2. Tareas\\n3. Recordatorios\\n4. Habitos\\n5. Listas\\n6. Reportes\\n7. Config\\n8. Admin' : 'Opcion no valida. Presiona \"9\" para ir al menú principal.' }}",
         "additionalFields": {}
       },
       "id": "d9de2cca-6400-4b81-b252-1d17d2754ce0",
