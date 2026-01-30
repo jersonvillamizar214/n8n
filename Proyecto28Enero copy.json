@@ -1004,6 +1004,29 @@
               },
               "renameOutput": true,
               "outputKey": "agenda_repro_2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_cancel_1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda_cancel_1"
             }
           ]
         },
@@ -5072,6 +5095,298 @@
         2100,
         1550
       ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "creado_por",
+              "lookupValue": "={{ $('Set Variables').first().json.telegram_user }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-citas-cancel-node-id",
+      "name": "Get Citas Para Cancelar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        544,
+        1600
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (items.length === 0 || !items[0].json.nombre) {\n    return { json: { text: \"No tienes citas pendientes para cancelar.\\n\\n9. Volver\", list: [] } };\n}\n\nlet text = \"❌ Selecciona la cita a CANCELAR:\\n\\n\";\nconst list = items.map((item, index) => {\n    text += `${index + 1}. ${item.json.fecha} ${item.json.hora} - ${item.json.nombre}\\n`;\n    return { id_cita: item.json.id_cita, detail: `${item.json.fecha} ${item.json.hora} - ${item.json.nombre}` };\n});\n\ntext += \"\\nIngresa el número de la cita.\\n9. Cancelar\";\n\nreturn { json: { text, list } };"
+      },
+      "id": "format-lista-cancel-node-id",
+      "name": "Format Lista Cancel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-cancel-node-id",
+      "name": "Send Lista Para Cancelar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        1600
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "agenda_cancel_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Cancel').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "upd-session-cancel-1-node-id",
+      "name": "Update Session Cancel 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1216,
+        1600
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $(\"Set Variables\").first().json.mensaje;\nconst list = JSON.parse($(\"Merge Session Data\").first().json.datos_parciales || \"[]\");\nconst index = parseInt(msg) - 1;\nif (isNaN(index) || index < 0 || index >= list.length) {\n    return { json: { valid: false, error: \"Selección no válida. Elige un número de la lista.\" } };\n}\n\nreturn { json: { valid: true, id_cita: list[index].id_cita, detail: list[index].detail } };"
+      },
+      "id": "logic-selec-cancel-node-id",
+      "name": "Logic Seleccion Cancel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-valid-cancel-node-id",
+      "name": "If Valid Cancel",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "estado": "cancelada",
+            "id_cita": "={{ $('Logic Seleccion Cancel').first().json.id_cita }}"
+          },
+          "matchingColumns": [
+            "id_cita"
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-cita-cancelada-node-id",
+      "name": "Update Cita Cancelada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1888,
+        1550
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✅ Cita cancelada: {{ $('Logic Seleccion Cancel').first().json.detail }}\\n\\nPresiona 9 para volver al menú.",
+        "additionalFields": {}
+      },
+      "id": "send-conf-cancel-node-id",
+      "name": "Send Confirmacion Cancel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2112,
+        1550
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "agenda_menu",
+            "paso_actual": "",
+            "datos_parciales": "",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "upd-session-back-agenda-node-id",
+      "name": "Update Session Back Agenda",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2336,
+        1550
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Cancel').first().json.error }}\\n\\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "send-error-cancel-node-id",
+      "name": "Send Error Cancel",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        1750
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -5306,6 +5621,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Logic Seleccion Cancel",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -5536,7 +5858,7 @@
         ],
         [
           {
-            "node": "Send En Desarrollo",
+            "node": "Get Citas Para Cancelar",
             "type": "main",
             "index": 0
           }
@@ -6514,6 +6836,90 @@
         [
           {
             "node": "Update to Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Citas Para Cancelar": {
+      "main": [
+        [
+          {
+            "node": "Format Lista Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lista Cancel": {
+      "main": [
+        [
+          {
+            "node": "Send Lista Para Cancelar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Lista Para Cancelar": {
+      "main": [
+        [
+          {
+            "node": "Update Session Cancel 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logic Seleccion Cancel": {
+      "main": [
+        [
+          {
+            "node": "If Valid Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Valid Cancel": {
+      "main": [
+        [
+          {
+            "node": "Update Cita Cancelada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Cita Cancelada": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmacion Cancel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmacion Cancel": {
+      "main": [
+        [
+          {
+            "node": "Update Session Back Agenda",
             "type": "main",
             "index": 0
           }
