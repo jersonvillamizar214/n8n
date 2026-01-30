@@ -2290,6 +2290,10 @@
             {
               "lookupColumn": "creado_por",
               "lookupValue": "={{ $('Set Variables').item.json.telegram_user }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
             }
           ]
         },
