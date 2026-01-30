@@ -459,7 +459,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "=Hola {{ $json.username }}, soy AgendaBot 👋\n\nEstoy aquí para ayudarte a organizar tus citas, tareas y recordatorios de forma sencilla y sin complicaciones.\n\nPuedes escribirme en cualquier momento.\nPara avanzar, solo tienes que escribir el número de la opción que quieras usar.\n\nMenú principal:\n0. Ayuda\n1. Agenda (citas)\n2. Tareas\n3. Recordatorios\n4. Hábitos\n5. Listas\n6. Reportes\n7. Configuración\n8. Administrador\n\n💡 Tip: escribe solo el número (ej: 1) y presiona enviar.",
+        "text": "=Hola {{ $json.username }}, soy AgendaBot 👋\n\nEstoy aquí para ayudarte a organizar tus citas, tareas y recordatorios de forma sencilla y sin complicaciones.\n\nPuedes escribirme en cualquier momento.\nPara avanzar, solo tienes que escribir el número de la opción que quieras usar.\n\nMenú principal:\n0. Ayuda\n1. Agenda (citas)\n2. Tareas\n3. Recordatorios\n4. Hábitos\n5. Listas\n6. Reportes\n\n💡 Tip: escribe solo el número (ej: 1) y presiona enviar.",
         "additionalFields": {}
       },
       "id": "1cdfbf8d-da32-48ff-8c83-9207e332a5b8",
@@ -5706,6 +5706,267 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1513010529,
+          "cachedResultName": "USUARIOS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telegram_user",
+              "lookupValue": "={{ $('Set Variables').first().json.telegram_user }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-usuario-rol-node-id",
+      "name": "Get Usuario Rol",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        400,
+        -416
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.rol }}",
+              "rightValue": "admin",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-es-admin-node-id",
+      "name": "If Es Admin",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -416
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "⛔ No tienes permisos para acceder a esta sección.\n\nPresiona 9 para volver al menú principal.",
+        "additionalFields": {}
+      },
+      "id": "send-no-permisos-node-id",
+      "name": "Send No Permisos",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        -320
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1513010529,
+          "cachedResultName": "USUARIOS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "nombre": "={{ $('Set Variables').first().json.username }}",
+            "rol": "usuario",
+            "permitido": "true"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "telegram_user",
+              "displayName": "telegram_user",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "rol",
+              "displayName": "rol",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "permitido",
+              "displayName": "permitido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "create-usuario-node-id",
+      "name": "Create Usuario",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -448,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1513010529,
+          "cachedResultName": "USUARIOS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telegram_user",
+              "lookupValue": "={{ $('Set Variables').first().json.telegram_user }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "check-rol-menu-node-id",
+      "name": "Check Rol Para Menu",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        640,
+        -416
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.rol }}",
+              "rightValue": "admin",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-admin-menu-node-id",
+      "name": "If Admin Menu",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        -416
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "MENU\n0. Ayuda\n1. Agenda\n2. Tareas\n3. Recordatorios\n4. Habitos\n5. Listas\n6. Reportes",
+        "additionalFields": {}
+      },
+      "id": "send-menu-usuario-node-id",
+      "name": "Send Menu Usuario",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        -320
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -5788,6 +6049,11 @@
         [
           {
             "node": "Log Interaction",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Usuario",
             "type": "main",
             "index": 0
           }
@@ -5972,7 +6238,7 @@
       "main": [
         [
           {
-            "node": "Send Menu Principal",
+            "node": "Check Rol Para Menu",
             "type": "main",
             "index": 0
           }
@@ -6046,7 +6312,7 @@
         ],
         [
           {
-            "node": "Send Admin Menu",
+            "node": "Get Usuario Rol",
             "type": "main",
             "index": 0
           }
@@ -6198,7 +6464,7 @@
         ],
         [
           {
-            "node": "Send Menu Principal",
+            "node": "Check Rol Para Menu",
             "type": "main",
             "index": 0
           }
@@ -6667,7 +6933,7 @@
       "main": [
         [
           {
-            "node": "Send Menu Principal",
+            "node": "Check Rol Para Menu",
             "type": "main",
             "index": 0
           }
@@ -6678,7 +6944,7 @@
       "main": [
         [
           {
-            "node": "Send Menu Principal",
+            "node": "Check Rol Para Menu",
             "type": "main",
             "index": 0
           }
@@ -6731,7 +6997,7 @@
         ],
         [
           {
-            "node": "Send Menu Principal",
+            "node": "Check Rol Para Menu",
             "type": "main",
             "index": 0
           }
@@ -7330,6 +7596,75 @@
         [
           {
             "node": "Update Session Back Agenda Completar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Usuario Rol": {
+      "main": [
+        [
+          {
+            "node": "If Es Admin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Es Admin": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send No Permisos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Rol Para Menu": {
+      "main": [
+        [
+          {
+            "node": "If Admin Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Admin Menu": {
+      "main": [
+        [
+          {
+            "node": "Send Menu Principal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Menu Usuario",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Menu Usuario": {
+      "main": [
+        [
+          {
+            "node": "Update Volver Menu",
             "type": "main",
             "index": 0
           }
