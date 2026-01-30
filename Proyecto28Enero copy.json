@@ -958,6 +958,52 @@
               },
               "renameOutput": true,
               "outputKey": "ayuda_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_repro_1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda_repro_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "agenda_repro_2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agenda_repro_2"
             }
           ]
         },
@@ -1812,7 +1858,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "Opcion no valida. Escribe 0-8.",
+        "text": "={{ $json.pantalla === 'menu_principal' ? 'Opcion no valida. Escribe 0-8.\\n\\nMENU\\n0. Ayuda\\n1. Agenda\\n2. Tareas\\n3. Recordatorios\\n4. Habitos\\n5. Listas\\n6. Reportes\\n7. Config\\n8. Admin' : 'Opcion no valida. Presiona \"9\" para ir al menú principal.' }}",
         "additionalFields": {}
       },
       "id": "d9de2cca-6400-4b81-b252-1d17d2754ce0",
@@ -2267,7 +2313,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "Opcion no valida. 1-5 o 9.",
+        "text": "Opcion no valida. Presiona 9 para ir al menú principal.",
         "additionalFields": {}
       },
       "id": "051a5b0d-82dd-49fc-990e-79d9ea9b3212",
@@ -4001,7 +4047,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "Opcion no valida. Escribe 1-5 o 9.",
+        "text": "Opcion no valida. Presiona 9 para ir al menú principal.",
         "additionalFields": {}
       },
       "id": "send-invalid-tarea-id",
@@ -4752,6 +4798,280 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "creado_por",
+              "lookupValue": "={{ $('Set Variables').first().json.telegram_user }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-citas-repro-node-id",
+      "name": "Get Citas Para Reprogramar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        544,
+        1360
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (items.length === 0 || !items[0].json.nombre) {\n    return { json: { text: \"No tienes citas pendientes para reprogramar.\\n\\n9. Volver\", list: [] } };\n}\n\nlet text = \"📅 Selecciona la cita a reprogramar:\\n\\n\";\nconst list = items.map((item, index) => {\n    text += `${index + 1}. ${item.json.fecha} ${item.json.hora} - ${item.json.nombre}\\n`;\n    return { id_cita: item.json.id_cita, detail: `${item.json.fecha} ${item.json.hora} - ${item.json.nombre}` };\n});\n\ntext += \"\\nIngresa el número de la cita.\\n9. Cancelar\";\n\nreturn { json: { text, list } };"
+      },
+      "id": "format-lista-repro-node-id",
+      "name": "Format Lista Repro",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-repro-node-id",
+      "name": "Send Lista Para Reprogramar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        1360
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "agenda_repro_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Repro').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "upd-session-repro-1-node-id",
+      "name": "Update Session Repro 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1216,
+        1360
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const msg = $(\"Set Variables\").first().json.mensaje;\nconst list = JSON.parse($(\"Merge Session Data\").first().json.datos_parciales || \"[]\");\nconst index = parseInt(msg) - 1;\nif (isNaN(index) || index < 0 || index >= list.length) {\n    return { json: { valid: false, error: \"Selección no válida. Elige un número de la lista.\" } };\n}\n\nreturn { json: { valid: true, id_cita: list[index].id_cita, detail: list[index].detail } };"
+      },
+      "id": "logic-selec-cita-node-id",
+      "name": "Logic Seleccion Cita",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        1360
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=Has seleccionado: {{ $json.detail }}\\n\\nPor favor, ingresa la NUEVA FECHA (YYYY-MM-DD):",
+        "additionalFields": {}
+      },
+      "id": "send-solic-fecha-node-id",
+      "name": "Send Solicitar Nueva Fecha",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1664,
+        1360
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "agenda_repro_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify($('Logic Seleccion Cita').first().json) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": [
+            "telegram_user"
+          ]
+        },
+        "options": {}
+      },
+      "id": "upd-session-repro-2-node-id",
+      "name": "Update Session Repro 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1888,
+        1360
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 0,
+          "cachedResultName": "CITAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha": "={{ $json.fecha_cita }}",
+            "id_cita": "={{ $json.id_cita }}"
+          },
+          "matchingColumns": [
+            "id_cita"
+          ]
+        },
+        "options": {}
+      },
+      "id": "upd-cita-db-node-id",
+      "name": "Update Cita DB",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2112,
+        1360
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "✅ ¡Cita reprogramada con éxito!\\n\\nPresiona 9 para volver al menú.",
+        "additionalFields": {}
+      },
+      "id": "send-conf-repro-node-id",
+      "name": "Send Confirmacion Repro",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2336,
+        1360
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const session = $(\"Merge Session Data\").first().json;\nlet reproData = {};\ntry {\n    const dp = session.datos_parciales;\n    reproData = (typeof dp === 'string') ? JSON.parse(dp) : dp;\n} catch (e) {}\n\nreturn { \n  id_cita: reproData.id_cita, \n  fecha_cita: $(\"Set Variables\").first().json.mensaje \n};"
+      },
+      "id": "extract-repro-data-node-id",
+      "name": "Extract Repro Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        1550
+      ]
     }
   ],
   "pinData": {},
@@ -4961,6 +5281,13 @@
         ],
         [
           {
+            "node": "Send Invalid Option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Ayuda Menu Router",
             "type": "main",
             "index": 0
@@ -4968,7 +5295,14 @@
         ],
         [
           {
-            "node": "Send Invalid Option",
+            "node": "Logic Seleccion Cita",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Repro Data",
             "type": "main",
             "index": 0
           }
@@ -5195,7 +5529,7 @@
         ],
         [
           {
-            "node": "Send En Desarrollo",
+            "node": "Get Citas Para Reprogramar",
             "type": "main",
             "index": 0
           }
@@ -6092,6 +6426,94 @@
         [
           {
             "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Citas Para Reprogramar": {
+      "main": [
+        [
+          {
+            "node": "Format Lista Repro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lista Repro": {
+      "main": [
+        [
+          {
+            "node": "Send Lista Para Reprogramar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Lista Para Reprogramar": {
+      "main": [
+        [
+          {
+            "node": "Update Session Repro 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logic Seleccion Cita": {
+      "main": [
+        [
+          {
+            "node": "Send Solicitar Nueva Fecha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Solicitar Nueva Fecha": {
+      "main": [
+        [
+          {
+            "node": "Update Session Repro 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Repro Data": {
+      "main": [
+        [
+          {
+            "node": "Update Cita DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Cita DB": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmacion Repro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmacion Repro": {
+      "main": [
+        [
+          {
+            "node": "Update to Agenda Menu",
             "type": "main",
             "index": 0
           }
