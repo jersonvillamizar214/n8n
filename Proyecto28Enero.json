@@ -4896,7 +4896,7 @@
             "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
             "pantalla_actual": "agenda_repro_1",
             "paso_actual": "1",
-            "datos_parciales": "={{ JSON.stringify($json.list) }}",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Repro').first().json.list) }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
           },
           "matchingColumns": [
@@ -4922,7 +4922,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const msg = $(\"Set Variables\").first().json.mensaje;\nconst list = JSON.parse($(\"Merge Session Data\").first().json.datos_parciales || \"[]\");\\nconst index = parseInt(msg) - 1;\nif (isNaN(index) || index < 0 || index >= list.length) {\n    return { json: { valid: false, error: \"Selección no válida. Elige un número de la lista.\" } };\n}\n\nreturn { json: { valid: true, id_cita: list[index].id_cita, detail: list[index].detail } };"
+        "jsCode": "const msg = $(\"Set Variables\").first().json.mensaje;\nconst list = JSON.parse($(\"Merge Session Data\").first().json.datos_parciales || \"[]\");\nconst index = parseInt(msg) - 1;\nif (isNaN(index) || index < 0 || index >= list.length) {\n    return { json: { valid: false, error: \"Selección no válida. Elige un número de la lista.\" } };\n}\n\nreturn { json: { valid: true, id_cita: list[index].id_cita, detail: list[index].detail } };"
       },
       "id": "logic-selec-cita-node-id",
       "name": "Logic Seleccion Cita",
@@ -4974,7 +4974,7 @@
             "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
             "pantalla_actual": "agenda_repro_2",
             "paso_actual": "2",
-            "datos_parciales": "={{ JSON.stringify($json) }}",
+            "datos_parciales": "={{ JSON.stringify($('Logic Seleccion Cita').first().json) }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
           },
           "matchingColumns": [
@@ -5015,7 +5015,8 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "fecha": "={{ $('Set Variables').first().json.mensaje }}"
+            "fecha": "={{ $json.fecha_cita }}",
+            "id_cita": "={{ $json.id_cita }}"
           },
           "matchingColumns": [
             "id_cita"
@@ -5058,6 +5059,19 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "const session = $(\"Merge Session Data\").first().json;\nlet reproData = {};\ntry {\n    const dp = session.datos_parciales;\n    reproData = (typeof dp === 'string') ? JSON.parse(dp) : dp;\n} catch (e) {}\n\nreturn { \n  id_cita: reproData.id_cita, \n  fecha_cita: $(\"Set Variables\").first().json.mensaje \n};"
+      },
+      "id": "extract-repro-data-node-id",
+      "name": "Extract Repro Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2100,
+        1550
+      ]
     }
   ],
   "pinData": {},
@@ -5288,7 +5302,7 @@
         ],
         [
           {
-            "node": "Update Cita DB",
+            "node": "Extract Repro Data",
             "type": "main",
             "index": 0
           }
@@ -6467,6 +6481,17 @@
         [
           {
             "node": "Update Session Repro 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Repro Data": {
+      "main": [
+        [
+          {
+            "node": "Update Cita DB",
             "type": "main",
             "index": 0
           }
