@@ -1165,6 +1165,52 @@
               },
               "renameOutput": true,
               "outputKey": "tarea_completada_confirm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "tarea_eliminar_1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tarea_eliminar_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "tarea_eliminada_confirm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tarea_eliminada_confirm"
             }
           ]
         },
@@ -4243,7 +4289,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS PENDIENTES:\\n\\nNo tienes tareas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS PENDIENTES:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' - Prioridad: ' + items[i].json.prioridad : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS PENDIENTES:\\n\\nNo tienes tareas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS PENDIENTES:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const fecha = items[i].json.fecha_objetivo ? ' - Fecha: ' + items[i].json.fecha_objetivo : '';\n  const prioridad = items[i].json.prioridad ? ' - Prioridad: ' + items[i].json.prioridad : '';\n  t += (i+1)+'. '+items[i].json.titulo + fecha + prioridad + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
       },
       "id": "format-tareas-pendientes-id",
       "name": "Format Tareas Pendientes",
@@ -4885,6 +4931,343 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [2320, 3600],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 37820303,
+          "cachedResultName": "TAREAS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "creado_por",
+              "lookupValue": "={{ $('Set Variables').item.json.telegram_user }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-tareas-para-eliminar-id",
+      "name": "Get Tareas Para Eliminar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [320, 3800],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'ELIMINAR TAREA:\\n\\nNo tienes tareas pendientes para eliminar.\\n\\n9. Volver', list: []}}];\n}\nlet t = 'ELIMINAR TAREA:\\n\\nSelecciona el numero de la tarea a eliminar:\\n\\n';\nconst list = [];\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' - Prioridad: ' + items[i].json.prioridad : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n  list.push({index: i+1, id_tarea: items[i].json.id_tarea, titulo: items[i].json.titulo});\n}\nreturn [{json:{mensaje:t+'\\n9. Volver', list: list}}];"
+      },
+      "id": "format-lista-eliminar-tareas-id",
+      "name": "Format Lista Eliminar Tareas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 3800]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-eliminar-tareas-id",
+      "name": "Send Lista Eliminar Tareas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [720, 3800],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "tarea_eliminar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Eliminar Tareas').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-eliminar-tarea-id",
+      "name": "Update Session Eliminar Tarea",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [920, 3800],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nconst listJson = $('Merge Session Data').first().json.datos_parciales || '[]';\nlet list = [];\ntry {\n  list = JSON.parse(listJson);\n  if (!Array.isArray(list)) list = [];\n} catch(e) {\n  list = [];\n}\n\nif (mensaje === '9') {\n  return [{json: {valid: false, cancel: true}}];\n}\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length || !list[index - 1]) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida. Escribe el numero de la tarea o 9 para volver.'}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_tarea: selected.id_tarea, titulo: selected.titulo}}];"
+      },
+      "id": "logic-seleccion-eliminar-tarea-id",
+      "name": "Logic Seleccion Eliminar Tarea",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 3800]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-eliminar-tarea-id",
+      "name": "If Valid Eliminar Tarea",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1320, 3800]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 37820303,
+          "cachedResultName": "TAREAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_tarea": "={{ $json.id_tarea }}",
+            "estado": "eliminada"
+          },
+          "matchingColumns": ["id_tarea"]
+        },
+        "options": {}
+      },
+      "id": "delete-tarea-id",
+      "name": "Delete Tarea",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1520, 3720],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=🗑️ Tarea eliminada: {{ $('Logic Seleccion Eliminar Tarea').first().json.titulo }}\n\n9. Volver al menu de tareas",
+        "additionalFields": {}
+      },
+      "id": "send-tarea-eliminada-id",
+      "name": "Send Tarea Eliminada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1720, 3720],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.cancel }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-eliminar-tarea-id",
+      "name": "If Cancel Eliminar Tarea",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1520, 3880]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Eliminar Tarea').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-eliminar-tarea-id",
+      "name": "Send Error Eliminar Tarea",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1720, 3960],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "tarea_eliminada_confirm",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-tarea-eliminada-id",
+      "name": "Update Session Tarea Eliminada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1920, 3720],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').first().json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "tarea-eliminada-router-id",
+      "name": "Tarea Eliminada Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2120, 3720]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver al menu de tareas.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-tarea-eliminada-id",
+      "name": "Send Invalid Tarea Eliminada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2320, 3800],
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -7131,6 +7514,20 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Logic Seleccion Eliminar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tarea Eliminada Router",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -7981,7 +8378,7 @@
         ],
         [
           {
-            "node": "Send Tarea En Desarrollo",
+            "node": "Get Tareas Para Eliminar",
             "type": "main",
             "index": 0
           }
@@ -8244,6 +8641,126 @@
         [
           {
             "node": "Send Invalid Tarea Completada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tareas Para Eliminar": {
+      "main": [
+        [
+          {
+            "node": "Format Lista Eliminar Tareas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lista Eliminar Tareas": {
+      "main": [
+        [
+          {
+            "node": "Send Lista Eliminar Tareas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Lista Eliminar Tareas": {
+      "main": [
+        [
+          {
+            "node": "Update Session Eliminar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logic Seleccion Eliminar Tarea": {
+      "main": [
+        [
+          {
+            "node": "If Valid Eliminar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Valid Eliminar Tarea": {
+      "main": [
+        [
+          {
+            "node": "Delete Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Cancel Eliminar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Tarea": {
+      "main": [
+        [
+          {
+            "node": "Send Tarea Eliminada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Tarea Eliminada": {
+      "main": [
+        [
+          {
+            "node": "Update Session Tarea Eliminada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Cancel Eliminar Tarea": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Eliminar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tarea Eliminada Router": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Tarea Eliminada",
             "type": "main",
             "index": 0
           }
