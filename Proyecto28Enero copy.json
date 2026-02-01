@@ -1050,6 +1050,29 @@
               },
               "renameOutput": true,
               "outputKey": "agenda_completar_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "consultar_citas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "consultar_citas"
             }
           ]
         },
@@ -2353,6 +2376,100 @@
         960
       ],
       "webhookId": "1952b1bd-5052-4cc8-961f-42e179c4571a",
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "consultar_citas",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "d1e2f3a4-b5c6-7d8e-9f0a-1b2c3d4e5f6a",
+      "name": "Update Session Consultar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [984, 960],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').first().json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "Consultar Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1200, 960]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver al menu de agenda.",
+        "additionalFields": {}
+      },
+      "id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+      "name": "Send Invalid Consultar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1400, 1040],
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -6342,6 +6459,31 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Consultar Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Router": {
+      "main": [
+        [
+          {
+            "node": "Send Agenda Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Consultar",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -6627,6 +6769,17 @@
         [
           {
             "node": "Send Consultar Citas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Consultar Citas": {
+      "main": [
+        [
+          {
+            "node": "Update Session Consultar",
             "type": "main",
             "index": 0
           }
