@@ -1096,6 +1096,75 @@
               },
               "renameOutput": true,
               "outputKey": "ver_tareas_pendientes"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "ver_tareas_completadas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver_tareas_completadas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "tarea_completar_1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tarea_completar_1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "tarea_completada_confirm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "tarea_completada_confirm"
             }
           ]
         },
@@ -4174,7 +4243,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS PENDIENTES:\\n\\nNo tienes tareas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS PENDIENTES:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' [' + items[i].json.prioridad + ']' : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS PENDIENTES:\\n\\nNo tienes tareas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS PENDIENTES:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' - Prioridad: ' + items[i].json.prioridad : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
       },
       "id": "format-tareas-pendientes-id",
       "name": "Format Tareas Pendientes",
@@ -4321,8 +4390,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "=TAREAS COMPLETADAS:\n\n{{ $input.all().length > 0 ? $input.all().map((item, i) => (i+1) + '. ' + (item.json.titulo || 'Sin titulo') + ' ✓').join('\\n') : 'No tienes tareas completadas.' }}\n\n9. Menu principal",
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
         "additionalFields": {}
       },
       "id": "send-tareas-completadas-id",
@@ -4330,9 +4399,113 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        560,
+        640,
         3300
       ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS COMPLETADAS:\\n\\nNo tienes tareas completadas.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS COMPLETADAS:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  t += (i+1)+'. '+items[i].json.titulo + ' ✓\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+      },
+      "id": "format-tareas-completadas-id",
+      "name": "Format Tareas Completadas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 3300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "ver_tareas_completadas",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-ver-completadas-id",
+      "name": "Update Session Ver Completadas",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [800, 3300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').first().json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "ver-completadas-router-id",
+      "name": "Ver Completadas Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1000, 3300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver al menu de tareas.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-ver-completadas-id",
+      "name": "Send Invalid Ver Completadas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1200, 3380],
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -4375,6 +4548,343 @@
         320,
         3500
       ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 37820303,
+          "cachedResultName": "TAREAS"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "creado_por",
+              "lookupValue": "={{ $('Set Variables').item.json.telegram_user }}"
+            },
+            {
+              "lookupColumn": "estado",
+              "lookupValue": "pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-tareas-para-completar-id",
+      "name": "Get Tareas Para Completar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [320, 3600],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'COMPLETAR TAREA:\\n\\nNo tienes tareas pendientes para completar.\\n\\n9. Volver', list: []}}];\n}\nlet t = 'COMPLETAR TAREA:\\n\\nSelecciona el numero de la tarea a completar:\\n\\n';\nconst list = [];\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' - Prioridad: ' + items[i].json.prioridad : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n  list.push({index: i+1, id_tarea: items[i].json.id_tarea, titulo: items[i].json.titulo});\n}\nreturn [{json:{mensaje:t+'\\n9. Volver', list: list}}];"
+      },
+      "id": "format-lista-completar-tareas-id",
+      "name": "Format Lista Completar Tareas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 3600]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-completar-tareas-id",
+      "name": "Send Lista Completar Tareas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [720, 3600],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "tarea_completar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Completar Tareas').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-completar-tarea-id",
+      "name": "Update Session Completar Tarea",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [920, 3600],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nconst listJson = $('Merge Session Data').first().json.datos_parciales || '[]';\nlet list = [];\ntry {\n  list = JSON.parse(listJson);\n  if (!Array.isArray(list)) list = [];\n} catch(e) {\n  list = [];\n}\n\nif (mensaje === '9') {\n  return [{json: {valid: false, cancel: true}}];\n}\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length || !list[index - 1]) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida. Escribe el numero de la tarea o 9 para volver.'}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_tarea: selected.id_tarea, titulo: selected.titulo}}];"
+      },
+      "id": "logic-seleccion-completar-tarea-id",
+      "name": "Logic Seleccion Completar Tarea",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 3600]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-completar-tarea-id",
+      "name": "If Valid Completar Tarea",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1320, 3600]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 37820303,
+          "cachedResultName": "TAREAS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_tarea": "={{ $json.id_tarea }}",
+            "estado": "completada"
+          },
+          "matchingColumns": ["id_tarea"]
+        },
+        "options": {}
+      },
+      "id": "update-tarea-completada-id",
+      "name": "Update Tarea Completada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1520, 3520],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✅ Tarea completada: {{ $('Logic Seleccion Completar Tarea').first().json.titulo }}\n\n9. Volver al menu de tareas",
+        "additionalFields": {}
+      },
+      "id": "send-tarea-completada-id",
+      "name": "Send Tarea Completada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1720, 3520],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.cancel }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-completar-tarea-id",
+      "name": "If Cancel Completar Tarea",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1520, 3680]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Completar Tarea').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-completar-tarea-id",
+      "name": "Send Error Completar Tarea",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1720, 3760],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "tarea_completada_confirm",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-tarea-completada-id",
+      "name": "Update Session Tarea Completada",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1920, 3520],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').first().json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "tarea-completada-router-id",
+      "name": "Tarea Completada Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2120, 3520]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver al menu de tareas.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-tarea-completada-id",
+      "name": "Send Invalid Tarea Completada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2320, 3600],
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -6600,6 +7110,27 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Ver Completadas Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Logic Seleccion Completar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tarea Completada Router",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -7443,7 +7974,7 @@
         ],
         [
           {
-            "node": "Send Tarea En Desarrollo",
+            "node": "Get Tareas Para Completar",
             "type": "main",
             "index": 0
           }
@@ -7542,6 +8073,17 @@
       "main": [
         [
           {
+            "node": "Format Tareas Completadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Tareas Completadas": {
+      "main": [
+        [
+          {
             "node": "Send Tareas Completadas",
             "type": "main",
             "index": 0
@@ -7551,7 +8093,31 @@
     },
     "Send Tareas Completadas": {
       "main": [
-        []
+        [
+          {
+            "node": "Update Session Ver Completadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver Completadas Router": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Ver Completadas",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Send Tarea En Desarrollo": {
@@ -7562,6 +8128,126 @@
     "Send Invalid Tarea": {
       "main": [
         []
+      ]
+    },
+    "Get Tareas Para Completar": {
+      "main": [
+        [
+          {
+            "node": "Format Lista Completar Tareas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Lista Completar Tareas": {
+      "main": [
+        [
+          {
+            "node": "Send Lista Completar Tareas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Lista Completar Tareas": {
+      "main": [
+        [
+          {
+            "node": "Update Session Completar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logic Seleccion Completar Tarea": {
+      "main": [
+        [
+          {
+            "node": "If Valid Completar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Valid Completar Tarea": {
+      "main": [
+        [
+          {
+            "node": "Update Tarea Completada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If Cancel Completar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Tarea Completada": {
+      "main": [
+        [
+          {
+            "node": "Send Tarea Completada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Tarea Completada": {
+      "main": [
+        [
+          {
+            "node": "Update Session Tarea Completada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Cancel Completar Tarea": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Completar Tarea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tarea Completada Router": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Tarea Completada",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Tarea Wizard Router": {
