@@ -1073,6 +1073,29 @@
               },
               "renameOutput": true,
               "outputKey": "consultar_citas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.pantalla }}",
+                    "rightValue": "ver_tareas_pendientes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver_tareas_pendientes"
             }
           ]
         },
@@ -4130,8 +4153,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "=TAREAS PENDIENTES:\n\n{{ $input.all().length > 0 ? $input.all().map((item, i) => (i+1) + '. ' + (item.json.titulo || 'Sin titulo')).join('\\n') : 'No tienes tareas pendientes.' }}\n\n9. Menu principal",
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
         "additionalFields": {}
       },
       "id": "send-tareas-pendientes-id",
@@ -4139,9 +4162,113 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        560,
+        640,
         3200
       ],
+      "credentials": {
+        "telegramApi": {
+          "id": "lE2p4THg4uaP8Pzj",
+          "name": "Telegram Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.titulo) {\n  return [{json:{mensaje:'TAREAS PENDIENTES:\\n\\nNo tienes tareas pendientes.\\n\\n9. Volver'}}];\n}\nlet t = 'TAREAS PENDIENTES:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const prioridad = items[i].json.prioridad ? ' [' + items[i].json.prioridad + ']' : '';\n  t += (i+1)+'. '+items[i].json.titulo + prioridad + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+      },
+      "id": "format-tareas-pendientes-id",
+      "name": "Format Tareas Pendientes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 3200]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 319260215,
+          "cachedResultName": "SESSIONS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "ver_tareas_pendientes",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-ver-pendientes-id",
+      "name": "Update Session Ver Pendientes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [800, 3200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "7vyPJQZk6BBHxLdg",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set Variables').first().json.mensaje }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "ver-pendientes-router-id",
+      "name": "Ver Pendientes Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1000, 3200]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver al menu de tareas.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-ver-pendientes-id",
+      "name": "Send Invalid Ver Pendientes",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1200, 3280],
       "credentials": {
         "telegramApi": {
           "id": "lE2p4THg4uaP8Pzj",
@@ -6466,6 +6593,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Ver Pendientes Router",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -7357,6 +7491,17 @@
       "main": [
         [
           {
+            "node": "Format Tareas Pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Tareas Pendientes": {
+      "main": [
+        [
+          {
             "node": "Send Tareas Pendientes",
             "type": "main",
             "index": 0
@@ -7366,7 +7511,31 @@
     },
     "Send Tareas Pendientes": {
       "main": [
-        []
+        [
+          {
+            "node": "Update Session Ver Pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ver Pendientes Router": {
+      "main": [
+        [
+          {
+            "node": "Send Tareas Menu",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Invalid Ver Pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get Tareas Completadas": {
