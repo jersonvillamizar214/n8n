@@ -3761,8 +3761,8 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "REPORTES\n\n1. Dia\n2. Semana\n3. Citas mes\n4. Tareas completadas\n9. Volver",
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "📊 REPORTES\n\n1. Resumen del día\n2. Resumen semanal\n3. Productividad\n9. Volver",
         "additionalFields": {}
       },
       "id": "8af3f1ee-6cce-405e-b055-2ae59934053a",
@@ -3799,11 +3799,11 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
             "pantalla_actual": "reportes_menu",
             "paso_actual": "0",
             "datos_parciales": "{}",
-            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
           },
           "matchingColumns": [
             "telegram_user"
@@ -3962,7 +3962,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "={{ $json.pantalla === 'menu_principal' ? 'Opcion no valida. Escribe 0-8.\\n\\nMENU\\n0. Ayuda\\n1. Agenda\\n2. Tareas\\n3. Recordatorios\\n4. Habitos\\n5. Listas\\n6. Reportes\\n7. Config\\n8. Admin' : 'Opcion no valida. Presiona \"9\" para ir al menú principal.' }}",
+        "text": "={{ $json.pantalla === 'menu_principal' ? 'Opcion no valida. Escribe 0-6.\\n\\nMENU\\n0. Ayuda\\n1. Agenda\\n2. Tareas\\n3. Recordatorios\\n4. Habitos\\n5. Listas\\n6. Reportes' : 'Opcion no valida. Presiona \"9\" para ir al menú principal.' }}",
         "additionalFields": {}
       },
       "id": "d9de2cca-6400-4b81-b252-1d17d2754ce0",
@@ -3984,7 +3984,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "MENU\n0. Ayuda\n1. Agenda\n2. Tareas\n3. Recordatorios\n4. Habitos\n5. Listas\n6. Reportes\n7. Config\n8. Admin",
+        "text": "MENU\n0. Ayuda\n1. Agenda\n2. Tareas\n3. Recordatorios\n4. Habitos\n5. Listas\n6. Reportes",
         "additionalFields": {}
       },
       "id": "665fb8c9-01f8-4baf-bcbb-4e06271a90b6",
@@ -9123,6 +9123,218 @@
           "name": "Telegram Bot"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {"conditions": {"options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"}, "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "1", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "renameOutput": true, "outputKey": "dia"},
+            {"conditions": {"options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"}, "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "2", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "renameOutput": true, "outputKey": "semana"},
+            {"conditions": {"options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"}, "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "3", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "renameOutput": true, "outputKey": "productividad"},
+            {"conditions": {"options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"}, "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "renameOutput": true, "outputKey": "volver"}
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "reportes-menu-router-id",
+      "name": "Reportes Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [960, -32]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 0, "cachedResultName": "CITAS", "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=0"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-citas-report-id",
+      "name": "Get Citas Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1160, -160],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 37820303, "cachedResultName": "TAREAS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-tareas-report-id",
+      "name": "Get Tareas Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1360, -160],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-habitos-report-id",
+      "name": "Get Habitos Report",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1560, -160],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const citas = $('Get Citas Report').all();\nconst tareas = $('Get Tareas Report').all();\nconst habitos = $('Get Habitos Report').all();\nconst user = String($('Set Variables').first().json.telegram_user);\n\n// Usar fecha local en vez de UTC\nconst hoy = new Date();\nconst año = hoy.getFullYear();\nconst mes = String(hoy.getMonth() + 1).padStart(2, '0');\nconst dia = String(hoy.getDate()).padStart(2, '0');\nconst hoyStr = año + '-' + mes + '-' + dia;\n\n// Citas de hoy\nconst citasHoy = citas.filter(c => c.json.creado_por && String(c.json.creado_por) === user && c.json.fecha === hoyStr && c.json.estado === 'pendiente');\n\n// Tareas pendientes para hoy\nconst tareasHoy = tareas.filter(t => t.json.creado_por && String(t.json.creado_por) === user && t.json.fecha_objetivo === hoyStr && t.json.estado === 'pendiente');\n\n// Hábitos activos\nconst habitosActivos = habitos.filter(h => h.json.creado_por && String(h.json.creado_por) === user && h.json.estado === 'activo');\n\nlet msg = '📅 RESUMEN DEL DÍA\\n' + hoyStr + '\\n\\n';\n\nmsg += '📋 CITAS HOY: ' + citasHoy.length + '\\n';\nif (citasHoy.length > 0) {\n  citasHoy.forEach(c => { msg += '  • ' + c.json.hora + ' - ' + c.json.nombre + '\\n'; });\n} else {\n  msg += '  Sin citas programadas\\n';\n}\n\nmsg += '\\n✅ TAREAS PENDIENTES: ' + tareasHoy.length + '\\n';\nif (tareasHoy.length > 0) {\n  tareasHoy.forEach(t => { msg += '  • ' + t.json.descripcion + '\\n'; });\n} else {\n  msg += '  Sin tareas para hoy\\n';\n}\n\nmsg += '\\n🎯 HÁBITOS: ' + habitosActivos.length + '\\n';\nif (habitosActivos.length > 0) {\n  habitosActivos.forEach(h => { msg += '  • ' + h.json.nombre + ' (' + h.json.hora_recordatorio + ')\\n'; });\n} else {\n  msg += '  Sin hábitos activos\\n';\n}\n\nmsg += '\\n9. Volver';\nreturn [{json: {mensaje: msg}}];"
+      },
+      "id": "format-report-dia-id",
+      "name": "Format Report Dia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, -160]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-report-dia-id",
+      "name": "Send Report Dia",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1960, -160],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 0, "cachedResultName": "CITAS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-citas-semanal-id",
+      "name": "Get Citas Semanal",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1160, 0],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 37820303, "cachedResultName": "TAREAS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-tareas-semanal-id",
+      "name": "Get Tareas Semanal",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1360, 0],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-habitos-semanal-id",
+      "name": "Get Habitos Semanal",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1560, 0],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const citas = $('Get Citas Semanal').all();\nconst tareas = $('Get Tareas Semanal').all();\nconst habitos = $('Get Habitos Semanal').all();\nconst user = String($('Set Variables').first().json.telegram_user);\n\n// Función para formatear fecha local\nfunction formatDate(d) {\n  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');\n}\n\nconst hoy = new Date();\nconst inicioSemana = new Date(hoy);\ninicioSemana.setDate(hoy.getDate() - hoy.getDay());\nconst finSemana = new Date(inicioSemana);\nfinSemana.setDate(inicioSemana.getDate() + 6);\n\nconst inicioStr = formatDate(inicioSemana);\nconst finStr = formatDate(finSemana);\n\n// Citas de la semana\nconst citasSemana = citas.filter(c => {\n  if (!c.json.creado_por || String(c.json.creado_por) !== user) return false;\n  return c.json.fecha >= inicioStr && c.json.fecha <= finStr;\n});\n\n// Tareas de la semana\nconst tareasUser = tareas.filter(t => t.json.creado_por && String(t.json.creado_por) === user);\nconst tareasCompletadas = tareasUser.filter(t => t.json.estado === 'completada');\nconst tareasPendientes = tareasUser.filter(t => t.json.estado === 'pendiente');\n\n// Hábitos activos\nconst habitosActivos = habitos.filter(h => h.json.creado_por && String(h.json.creado_por) === user && h.json.estado === 'activo');\n\nlet msg = '📊 RESUMEN SEMANAL\\n' + inicioStr + ' al ' + finStr + '\\n\\n';\n\nmsg += '📋 CITAS ESTA SEMANA: ' + citasSemana.length + '\\n';\nif (citasSemana.length > 0) {\n  citasSemana.slice(0, 5).forEach(c => { msg += '  • ' + c.json.fecha + ' ' + c.json.hora + ' - ' + c.json.nombre + '\\n'; });\n  if (citasSemana.length > 5) msg += '  ... y ' + (citasSemana.length - 5) + ' más\\n';\n}\n\nmsg += '\\n✅ TAREAS:\\n';\nmsg += '  Completadas: ' + tareasCompletadas.length + '\\n';\nmsg += '  Pendientes: ' + tareasPendientes.length + '\\n';\n\nmsg += '\\n🎯 HÁBITOS ACTIVOS: ' + habitosActivos.length + '\\n';\nhabitosActivos.forEach(h => { msg += '  • ' + h.json.nombre + '\\n'; });\n\nmsg += '\\n9. Volver';\nreturn [{json: {mensaje: msg}}];"
+      },
+      "id": "format-report-semanal-id",
+      "name": "Format Report Semanal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-report-semanal-id",
+      "name": "Send Report Semanal",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1960, 0],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 37820303, "cachedResultName": "TAREAS"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-tareas-productividad-id",
+      "name": "Get Tareas Productividad",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1160, 160],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const tareas = $('Get Tareas Productividad').all();\nconst user = String($('Set Variables').first().json.telegram_user);\n\nconst tareasUser = tareas.filter(t => t.json.creado_por && String(t.json.creado_por) === user);\nconst completadas = tareasUser.filter(t => t.json.estado === 'completada');\nconst pendientes = tareasUser.filter(t => t.json.estado === 'pendiente');\nconst eliminadas = tareasUser.filter(t => t.json.estado === 'eliminada');\n\nconst total = tareasUser.length;\nconst porcentaje = total > 0 ? Math.round((completadas.length / total) * 100) : 0;\n\nlet msg = '📈 PRODUCTIVIDAD\\n\\n';\nmsg += '📊 ESTADÍSTICAS DE TAREAS:\\n\\n';\nmsg += '  Total creadas: ' + total + '\\n';\nmsg += '  ✅ Completadas: ' + completadas.length + '\\n';\nmsg += '  ⏳ Pendientes: ' + pendientes.length + '\\n';\nmsg += '  🗑️ Eliminadas: ' + eliminadas.length + '\\n\\n';\nmsg += '  📈 Tasa de completado: ' + porcentaje + '%\\n';\n\n// Barra de progreso visual\nconst barraLlena = Math.round(porcentaje / 10);\nconst barraVacia = 10 - barraLlena;\nmsg += '  [' + '█'.repeat(barraLlena) + '░'.repeat(barraVacia) + ']\\n';\n\nmsg += '\\n9. Volver';\nreturn [{json: {mensaje: msg}}];"
+      },
+      "id": "format-report-productividad-id",
+      "name": "Format Report Productividad",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 160]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-report-productividad-id",
+      "name": "Send Report Productividad",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1560, 160],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opción no válida.\n\n📊 REPORTES\n\n1. Resumen del día\n2. Resumen semanal\n3. Productividad\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-reportes-id",
+      "name": "Send Invalid Reportes",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1160, 320],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
     }
   ],
   "pinData": {},
@@ -9323,7 +9535,7 @@
         ],
         [
           {
-            "node": "Send Invalid Option",
+            "node": "Reportes Menu Router",
             "type": "main",
             "index": 0
           }
@@ -9918,15 +10130,61 @@
       ]
     },
     "Send Reportes Menu": {
+      "main": [[{"node": "Update to Reportes", "type": "main", "index": 0}]]
+    },
+    "Update to Reportes": {
+      "main": [[]]
+    },
+    "Reportes Menu Router": {
       "main": [
-        [
-          {
-            "node": "Update to Reportes",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{"node": "Get Citas Report", "type": "main", "index": 0}],
+        [{"node": "Get Citas Semanal", "type": "main", "index": 0}],
+        [{"node": "Get Tareas Productividad", "type": "main", "index": 0}],
+        [{"node": "Send Menu Principal", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Reportes", "type": "main", "index": 0}]
       ]
+    },
+    "Get Citas Report": {
+      "main": [[{"node": "Get Tareas Report", "type": "main", "index": 0}]]
+    },
+    "Get Tareas Report": {
+      "main": [[{"node": "Get Habitos Report", "type": "main", "index": 0}]]
+    },
+    "Get Habitos Report": {
+      "main": [[{"node": "Format Report Dia", "type": "main", "index": 0}]]
+    },
+    "Format Report Dia": {
+      "main": [[{"node": "Send Report Dia", "type": "main", "index": 0}]]
+    },
+    "Send Report Dia": {
+      "main": [[{"node": "Send Reportes Menu", "type": "main", "index": 0}]]
+    },
+    "Get Citas Semanal": {
+      "main": [[{"node": "Get Tareas Semanal", "type": "main", "index": 0}]]
+    },
+    "Get Tareas Semanal": {
+      "main": [[{"node": "Get Habitos Semanal", "type": "main", "index": 0}]]
+    },
+    "Get Habitos Semanal": {
+      "main": [[{"node": "Format Report Semanal", "type": "main", "index": 0}]]
+    },
+    "Format Report Semanal": {
+      "main": [[{"node": "Send Report Semanal", "type": "main", "index": 0}]]
+    },
+    "Send Report Semanal": {
+      "main": [[{"node": "Send Reportes Menu", "type": "main", "index": 0}]]
+    },
+    "Get Tareas Productividad": {
+      "main": [[{"node": "Format Report Productividad", "type": "main", "index": 0}]]
+    },
+    "Format Report Productividad": {
+      "main": [[{"node": "Send Report Productividad", "type": "main", "index": 0}]]
+    },
+    "Send Report Productividad": {
+      "main": [[{"node": "Send Reportes Menu", "type": "main", "index": 0}]]
+    },
+    "Send Invalid Reportes": {
+      "main": [[]]
     },
     "Send Config Menu": {
       "main": [
