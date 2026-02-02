@@ -1283,6 +1283,69 @@
               },
               "renameOutput": true,
               "outputKey": "recordatorio_editar_2"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "lista_crear_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "lista_crear_1"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "lista_crear_2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "lista_crear_2"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "ver_listas", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver_listas"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "items_lista", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "items_lista"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "items_agregar", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "items_agregar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "items_completar_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "items_completar_1"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "items_eliminar_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "items_eliminar_1"
             }
           ]
         },
@@ -2703,7 +2766,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "LISTAS\n\n1. Crear\n2. Ver\n3. Agregar item\n4. Completar item\n5. Eliminar\n9. Volver",
+        "text": "LISTAS\n\n1. Crear lista\n2. Ver mis listas\n9. Volver",
         "additionalFields": {}
       },
       "id": "dad49a30-1a3e-41a7-9379-d978e2edc610",
@@ -2766,6 +2829,935 @@
           "name": "Google Sheets"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crear"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "listas-menu-router-id",
+      "name": "Listas Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [880, -224]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "CREAR LISTA\n\nEscribe el nombre de la lista:\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-lista-paso1-id",
+      "name": "Send Lista Paso 1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1080, -400],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "lista_crear_1",
+            "paso_actual": "1",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-lista-paso1-id",
+      "name": "Update Lista Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1280, -400],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nif (mensaje === '9') { return [{json: {cancel: true}}]; }\nconst id_lista = 'LIST-' + Date.now();\nreturn [{json: {cancel: false, id_lista: id_lista, nombre_lista: mensaje, items_count: 0}}];"
+      },
+      "id": "lista-crear-nombre-id",
+      "name": "Lista Crear Nombre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1480, -400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-lista1-id",
+      "name": "If Cancel Lista 1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1680, -400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 704259980, "cachedResultName": "LISTAS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_lista": "={{ $json.id_lista }}",
+            "nombre_lista": "={{ $json.nombre_lista }}",
+            "tipo": "general",
+            "creado_por": "={{ $('Set Variables').first().json.telegram_user }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "id_lista", "displayName": "id_lista", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "nombre_lista", "displayName": "nombre_lista", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "tipo", "displayName": "tipo", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "creado_por", "displayName": "creado_por", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "insert-lista-id",
+      "name": "Insert Lista",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1880, -480],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=Lista \"{{ $('Lista Crear Nombre').first().json.nombre_lista }}\" creada.\n\nEscribe un item para agregar:\n\n0. Terminar\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-lista-paso2-id",
+      "name": "Send Lista Paso 2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2080, -480],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "lista_crear_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify({id_lista: $('Lista Crear Nombre').first().json.id_lista, nombre_lista: $('Lista Crear Nombre').first().json.nombre_lista, items_count: $('Lista Crear Nombre').first().json.items_count}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-lista-paso2-id",
+      "name": "Update Lista Paso 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2280, -480],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\n\nif (mensaje === '9') { return [{json: {action: 'cancel'}}]; }\nif (mensaje === '0') { return [{json: {action: 'terminar', nombre_lista: datos.nombre_lista, items_count: datos.items_count || 0}}]; }\n\nconst id_item = 'ITEM-' + Date.now();\nreturn [{json: {action: 'agregar', id_item: id_item, id_lista: datos.id_lista, item: mensaje, nombre_lista: datos.nombre_lista, items_count: (datos.items_count || 0) + 1}}];"
+      },
+      "id": "lista-agregar-item-id",
+      "name": "Lista Agregar Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2480, -480]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $json.action }}", "rightValue": "agregar", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agregar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $json.action }}", "rightValue": "terminar", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "terminar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $json.action }}", "rightValue": "cancel", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cancel"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "none"}
+      },
+      "id": "lista-action-router-id",
+      "name": "Lista Action Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2680, -480]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 913068970, "cachedResultName": "ITEMS_LISTA"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_item": "={{ $json.id_item }}",
+            "id_lista": "={{ $json.id_lista }}",
+            "item": "={{ $json.item }}",
+            "estado": "pendiente"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "id_item", "displayName": "id_item", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "id_lista", "displayName": "id_lista", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "item", "displayName": "item", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "insert-item-lista-id",
+      "name": "Insert Item Lista",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2880, -560],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✓ Item agregado: {{ $('Lista Agregar Item').first().json.item }}\n\nEscribe otro item:\n\n0. Terminar\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-item-agregado-loop-id",
+      "name": "Send Item Agregado Loop",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3080, -560],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "lista_crear_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify({id_lista: $('Lista Agregar Item').first().json.id_lista, nombre_lista: $('Lista Agregar Item').first().json.nombre_lista, items_count: $('Lista Agregar Item').first().json.items_count}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-item-loop-id",
+      "name": "Update Session Item Loop",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3280, -560],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✅ Lista \"{{ $json.nombre_lista }}\" creada con {{ $json.items_count }} items.\n\nVolviendo al menú",
+        "additionalFields": {}
+      },
+      "id": "send-lista-creada-id",
+      "name": "Send Lista Creada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2880, -480],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 704259980, "cachedResultName": "LISTAS", "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=704259980"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-listas-usuario-id",
+      "name": "Get Listas Usuario",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1080, -224],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst telegramUser = String($('Set Variables').first().json.telegram_user);\nconst filtered = items.filter(i => String(i.json.creado_por) === telegramUser);\nif (!filtered.length) {\n  return [{json: {mensaje: 'MIS LISTAS\\n\\nNo tienes listas creadas.\\n\\n9. Volver', list: []}}];\n}\nlet t = 'MIS LISTAS\\n\\n';\nlet list = [];\nfor (let i = 0; i < filtered.length; i++) {\n  t += (i+1) + '. ' + filtered[i].json.nombre_lista + '\\n';\n  list.push({id_lista: filtered[i].json.id_lista, nombre_lista: filtered[i].json.nombre_lista});\n}\nt += '\\n9. Volver';\nreturn [{json: {mensaje: t, list: list}}];"
+      },
+      "id": "format-listas-usuario-id",
+      "name": "Format Listas Usuario",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, -224]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-listas-usuario-id",
+      "name": "Send Listas Usuario",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1480, -224],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "ver_listas",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Listas Usuario').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-ver-listas-id",
+      "name": "Update Session Ver Listas",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1680, -224],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nconst listJson = $('Merge Session Data').first().json.datos_parciales || '[]';\nlet list = [];\ntry { list = JSON.parse(listJson); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }\n\nif (mensaje === '9') { return [{json: {valid: false, cancel: true}}]; }\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length || !list[index - 1]) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida.'}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_lista: selected.id_lista, nombre_lista: selected.nombre_lista}}];"
+      },
+      "id": "logic-seleccion-lista-id",
+      "name": "Logic Seleccion Lista",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1880, -224]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.valid }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-lista-id",
+      "name": "If Valid Lista",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2080, -224]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-ver-listas-id",
+      "name": "If Cancel Ver Listas",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2280, -144]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Lista').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-ver-listas-id",
+      "name": "Send Error Ver Listas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2480, -64],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 913068970, "cachedResultName": "ITEMS_LISTA", "cachedResultUrl": "https://docs.google.com/spreadsheets/d/196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q/edit#gid=913068970"},
+        "options": {"outputFormatting": {"general": "autoDetect"}}
+      },
+      "id": "get-items-lista-id",
+      "name": "Get Items Lista",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2280, -304],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\n\n// Try to get id_lista and nombre_lista from multiple sources\nlet id_lista, nombre_lista;\ntry { id_lista = $('Logic Seleccion Lista').first().json.id_lista; nombre_lista = $('Logic Seleccion Lista').first().json.nombre_lista; } catch(e) {}\nif (!id_lista) { try { id_lista = $('Logic Agregar Item').first().json.id_lista; nombre_lista = $('Logic Agregar Item').first().json.nombre_lista; } catch(e) {} }\nif (!id_lista) { try { id_lista = $('Logic Seleccion Completar Item').first().json.id_lista; nombre_lista = $('Logic Seleccion Completar Item').first().json.nombre_lista; } catch(e) {} }\nif (!id_lista) { try { id_lista = $('Logic Seleccion Eliminar Item').first().json.id_lista; nombre_lista = $('Logic Seleccion Eliminar Item').first().json.nombre_lista; } catch(e) {} }\nif (!id_lista) { id_lista = datos.id_lista; nombre_lista = datos.nombre_lista; }\nid_lista = String(id_lista || '');\nnombre_lista = nombre_lista || 'Lista';\n\nlet filteredItems = items.filter(i => String(i.json.id_lista) === id_lista && (i.json.estado === 'pendiente' || i.json.estado === 'completado'));\n\nif (!filteredItems.length) {\n  return [{json: {mensaje: nombre_lista.toUpperCase() + '\\n\\n(Sin items)\\n\\n1. Agregar item\\n9. Volver', list: [], id_lista: id_lista, nombre_lista: nombre_lista}}];\n}\n\nlet t = nombre_lista.toUpperCase() + '\\n\\n';\nlet list = [];\nfor (let i = 0; i < filteredItems.length; i++) {\n  const check = filteredItems[i].json.estado === 'completado' ? '☑' : '☐';\n  t += check + ' ' + filteredItems[i].json.item + '\\n';\n  list.push({id_item: filteredItems[i].json.id_item, item: filteredItems[i].json.item, estado: filteredItems[i].json.estado});\n}\nt += '\\n1. Agregar item\\n2. Marcar completado\\n3. Eliminar item\\n9. Volver';\nreturn [{json: {mensaje: t, list: list, id_lista: id_lista, nombre_lista: nombre_lista}}];"
+      },
+      "id": "format-items-lista-id",
+      "name": "Format Items Lista",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2480, -304]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-items-lista-id",
+      "name": "Send Items Lista",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2680, -304],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "items_lista",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({id_lista: $('Format Items Lista').first().json.id_lista, nombre_lista: $('Format Items Lista').first().json.nombre_lista, list: $('Format Items Lista').first().json.list}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-items-lista-id",
+      "name": "Update Session Items Lista",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2880, -304],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agregar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "completar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "3", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "eliminar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "items-lista-menu-router-id",
+      "name": "Items Lista Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [3080, -304]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Escribe el item a agregar:\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-agregar-item-id",
+      "name": "Send Agregar Item",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3280, -480],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "items_agregar",
+            "paso_actual": "1",
+            "datos_parciales": "={{ $('Merge Session Data').first().json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-agregar-item-id",
+      "name": "Update Session Agregar Item",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3480, -480],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\n\nif (mensaje === '9') { return [{json: {cancel: true, id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}]; }\n\nconst id_item = 'ITEM-' + Date.now();\nreturn [{json: {cancel: false, id_item: id_item, id_lista: datos.id_lista, item: mensaje, nombre_lista: datos.nombre_lista}}];"
+      },
+      "id": "logic-agregar-item-id",
+      "name": "Logic Agregar Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3680, -480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-agregar-item-id",
+      "name": "If Cancel Agregar Item",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [3880, -480]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 913068970, "cachedResultName": "ITEMS_LISTA"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_item": "={{ $json.id_item }}",
+            "id_lista": "={{ $json.id_lista }}",
+            "item": "={{ $json.item }}",
+            "estado": "pendiente"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "id_item", "displayName": "id_item", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "id_lista", "displayName": "id_lista", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "item", "displayName": "item", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "insert-item-id",
+      "name": "Insert Item",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [4080, -560],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✓ Item agregado: {{ $('Logic Agregar Item').first().json.item }}\n\nVolviendo a la lista...",
+        "additionalFields": {}
+      },
+      "id": "send-item-agregado-id",
+      "name": "Send Item Agregado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [4280, -560],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nconst list = datos.list || [];\nconst pendientes = list.filter(i => i.estado === 'pendiente');\n\nif (!pendientes.length) {\n  return [{json: {mensaje: 'MARCAR COMPLETADO\\n\\nNo hay items pendientes.\\n\\n9. Volver', list: []}}];\n}\n\nlet t = 'MARCAR COMPLETADO\\n\\nSelecciona el item:\\n\\n';\nfor (let i = 0; i < pendientes.length; i++) {\n  t += (i+1) + '. ' + pendientes[i].item + '\\n';\n}\nt += '\\n9. Volver';\nreturn [{json: {mensaje: t, list: pendientes}}];"
+      },
+      "id": "format-items-completar-id",
+      "name": "Format Items Completar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3280, -304]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-items-completar-id",
+      "name": "Send Items Completar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3480, -304],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "items_completar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({id_lista: JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}').id_lista, nombre_lista: JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}').nombre_lista, list: $('Format Items Completar').first().json.list}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-completar-id",
+      "name": "Update Session Completar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3680, -304],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nconst list = datos.list || [];\n\nif (mensaje === '9') { return [{json: {valid: false, cancel: true, id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}]; }\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida.', id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_item: selected.id_item, item: selected.item, id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}];"
+      },
+      "id": "logic-seleccion-completar-item-id",
+      "name": "Logic Seleccion Completar Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3880, -304]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.valid }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-completar-item-id",
+      "name": "If Valid Completar Item",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [4080, -304]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 913068970, "cachedResultName": "ITEMS_LISTA"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {"id_item": "={{ $json.id_item }}", "estado": "completado"},
+          "matchingColumns": ["id_item"],
+          "schema": [
+            {"id": "id_item", "displayName": "id_item", "required": false, "defaultMatch": true, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-item-completado-id",
+      "name": "Update Item Completado",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [4280, -384],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=☑ Item completado: {{ $('Logic Seleccion Completar Item').first().json.item }}\n\nVolviendo a la lista...",
+        "additionalFields": {}
+      },
+      "id": "send-item-completado-id",
+      "name": "Send Item Completado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [4480, -384],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-completar-item-id",
+      "name": "If Cancel Completar Item",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [4280, -224]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Completar Item').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-completar-item-id",
+      "name": "Send Error Completar Item",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [4480, -144],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nconst list = datos.list || [];\n\nif (!list.length) {\n  return [{json: {mensaje: 'ELIMINAR ITEM\\n\\nNo hay items para eliminar.\\n\\n9. Volver', list: []}}];\n}\n\nlet t = 'ELIMINAR ITEM\\n\\nSelecciona el item:\\n\\n';\nfor (let i = 0; i < list.length; i++) {\n  t += (i+1) + '. ' + list[i].item + '\\n';\n}\nt += '\\n9. Volver';\nreturn [{json: {mensaje: t, list: list}}];"
+      },
+      "id": "format-items-eliminar-id",
+      "name": "Format Items Eliminar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3280, -128]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-items-eliminar-id",
+      "name": "Send Items Eliminar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3480, -128],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "items_eliminar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify({id_lista: JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}').id_lista, nombre_lista: JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}').nombre_lista, list: $('Format Items Eliminar').first().json.list}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-eliminar-id",
+      "name": "Update Session Eliminar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3680, -128],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = String($('Set Variables').first().json.mensaje).trim();\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nconst list = datos.list || [];\n\nif (mensaje === '9') { return [{json: {valid: false, cancel: true, id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}]; }\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida.', id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_item: selected.id_item, item: selected.item, id_lista: datos.id_lista, nombre_lista: datos.nombre_lista}}];"
+      },
+      "id": "logic-seleccion-eliminar-item-id",
+      "name": "Logic Seleccion Eliminar Item",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3880, -128]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.valid }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-eliminar-item-id",
+      "name": "If Valid Eliminar Item",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [4080, -128]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 913068970, "cachedResultName": "ITEMS_LISTA"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {"id_item": "={{ $json.id_item }}", "estado": "eliminado"},
+          "matchingColumns": ["id_item"],
+          "schema": [
+            {"id": "id_item", "displayName": "id_item", "required": false, "defaultMatch": true, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "update-item-eliminado-id",
+      "name": "Update Item Eliminado",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [4280, -48],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=🗑 Item eliminado: {{ $('Logic Seleccion Eliminar Item').first().json.item }}\n\nVolviendo a la lista...",
+        "additionalFields": {}
+      },
+      "id": "send-item-eliminado-id",
+      "name": "Send Item Eliminado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [4480, -48],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-eliminar-item-id",
+      "name": "If Cancel Eliminar Item",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [4280, 32]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Eliminar Item').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-eliminar-item-id",
+      "name": "Send Error Eliminar Item",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [4480, 112],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida en Listas.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-listas-id",
+      "name": "Send Invalid Listas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1080, -64],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-items-lista-id",
+      "name": "Send Invalid Items Lista",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3280, -64],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
     },
     {
       "parameters": {
@@ -8317,7 +9309,7 @@
         ],
         [
           {
-            "node": "Send Invalid Option",
+            "node": "Listas Menu Router",
             "type": "main",
             "index": 0
           }
@@ -8441,7 +9433,14 @@
         [{"node": "Habito Crear Paso 3", "type": "main", "index": 0}],
         [{"node": "Guardar Habito", "type": "main", "index": 0}],
         [{"node": "Logic Seleccion Recordatorio", "type": "main", "index": 0}],
-        [{"node": "Guardar Hora Recordatorio", "type": "main", "index": 0}]
+        [{"node": "Guardar Hora Recordatorio", "type": "main", "index": 0}],
+        [{"node": "Lista Crear Nombre", "type": "main", "index": 0}],
+        [{"node": "Lista Agregar Item", "type": "main", "index": 0}],
+        [{"node": "Logic Seleccion Lista", "type": "main", "index": 0}],
+        [{"node": "Items Lista Menu Router", "type": "main", "index": 0}],
+        [{"node": "Logic Agregar Item", "type": "main", "index": 0}],
+        [{"node": "Logic Seleccion Completar Item", "type": "main", "index": 0}],
+        [{"node": "Logic Seleccion Eliminar Item", "type": "main", "index": 0}]
       ]
     },
     "Consultar Router": {
@@ -8754,14 +9753,168 @@
       "main": [[{"node": "Check Rol Para Menu", "type": "main", "index": 0}]]
     },
     "Send Listas Menu": {
+      "main": [[{"node": "Update to Listas", "type": "main", "index": 0}]]
+    },
+    "Update to Listas": {
+      "main": [[]]
+    },
+    "Listas Menu Router": {
       "main": [
-        [
-          {
-            "node": "Update to Listas",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{"node": "Send Lista Paso 1", "type": "main", "index": 0}],
+        [{"node": "Get Listas Usuario", "type": "main", "index": 0}],
+        [{"node": "Check Rol Para Menu", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Listas", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Lista Paso 1": {
+      "main": [[{"node": "Update Lista Paso 1", "type": "main", "index": 0}]]
+    },
+    "Lista Crear Nombre": {
+      "main": [[{"node": "If Cancel Lista 1", "type": "main", "index": 0}]]
+    },
+    "If Cancel Lista 1": {
+      "main": [
+        [{"node": "Send Listas Menu", "type": "main", "index": 0}],
+        [{"node": "Insert Lista", "type": "main", "index": 0}]
+      ]
+    },
+    "Insert Lista": {
+      "main": [[{"node": "Send Lista Paso 2", "type": "main", "index": 0}]]
+    },
+    "Send Lista Paso 2": {
+      "main": [[{"node": "Update Lista Paso 2", "type": "main", "index": 0}]]
+    },
+    "Lista Agregar Item": {
+      "main": [[{"node": "Lista Action Router", "type": "main", "index": 0}]]
+    },
+    "Lista Action Router": {
+      "main": [
+        [{"node": "Insert Item Lista", "type": "main", "index": 0}],
+        [{"node": "Send Lista Creada", "type": "main", "index": 0}],
+        [{"node": "Send Listas Menu", "type": "main", "index": 0}]
+      ]
+    },
+    "Insert Item Lista": {
+      "main": [[{"node": "Send Item Agregado Loop", "type": "main", "index": 0}]]
+    },
+    "Send Item Agregado Loop": {
+      "main": [[{"node": "Update Session Item Loop", "type": "main", "index": 0}]]
+    },
+    "Send Lista Creada": {
+      "main": [[{"node": "Check Rol Para Menu", "type": "main", "index": 0}]]
+    },
+    "Get Listas Usuario": {
+      "main": [[{"node": "Format Listas Usuario", "type": "main", "index": 0}]]
+    },
+    "Format Listas Usuario": {
+      "main": [[{"node": "Send Listas Usuario", "type": "main", "index": 0}]]
+    },
+    "Send Listas Usuario": {
+      "main": [[{"node": "Update Session Ver Listas", "type": "main", "index": 0}]]
+    },
+    "Logic Seleccion Lista": {
+      "main": [[{"node": "If Valid Lista", "type": "main", "index": 0}]]
+    },
+    "If Valid Lista": {
+      "main": [
+        [{"node": "Get Items Lista", "type": "main", "index": 0}],
+        [{"node": "If Cancel Ver Listas", "type": "main", "index": 0}]
+      ]
+    },
+    "If Cancel Ver Listas": {
+      "main": [
+        [{"node": "Send Listas Menu", "type": "main", "index": 0}],
+        [{"node": "Send Error Ver Listas", "type": "main", "index": 0}]
+      ]
+    },
+    "Get Items Lista": {
+      "main": [[{"node": "Format Items Lista", "type": "main", "index": 0}]]
+    },
+    "Format Items Lista": {
+      "main": [[{"node": "Send Items Lista", "type": "main", "index": 0}]]
+    },
+    "Send Items Lista": {
+      "main": [[{"node": "Update Session Items Lista", "type": "main", "index": 0}]]
+    },
+    "Items Lista Menu Router": {
+      "main": [
+        [{"node": "Send Agregar Item", "type": "main", "index": 0}],
+        [{"node": "Format Items Completar", "type": "main", "index": 0}],
+        [{"node": "Format Items Eliminar", "type": "main", "index": 0}],
+        [{"node": "Get Listas Usuario", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Items Lista", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Agregar Item": {
+      "main": [[{"node": "Update Session Agregar Item", "type": "main", "index": 0}]]
+    },
+    "Logic Agregar Item": {
+      "main": [[{"node": "If Cancel Agregar Item", "type": "main", "index": 0}]]
+    },
+    "If Cancel Agregar Item": {
+      "main": [
+        [{"node": "Get Items Lista", "type": "main", "index": 0}],
+        [{"node": "Insert Item", "type": "main", "index": 0}]
+      ]
+    },
+    "Insert Item": {
+      "main": [[{"node": "Send Item Agregado", "type": "main", "index": 0}]]
+    },
+    "Send Item Agregado": {
+      "main": [[{"node": "Get Items Lista", "type": "main", "index": 0}]]
+    },
+    "Format Items Completar": {
+      "main": [[{"node": "Send Items Completar", "type": "main", "index": 0}]]
+    },
+    "Send Items Completar": {
+      "main": [[{"node": "Update Session Completar", "type": "main", "index": 0}]]
+    },
+    "Logic Seleccion Completar Item": {
+      "main": [[{"node": "If Valid Completar Item", "type": "main", "index": 0}]]
+    },
+    "If Valid Completar Item": {
+      "main": [
+        [{"node": "Update Item Completado", "type": "main", "index": 0}],
+        [{"node": "If Cancel Completar Item", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Item Completado": {
+      "main": [[{"node": "Send Item Completado", "type": "main", "index": 0}]]
+    },
+    "Send Item Completado": {
+      "main": [[{"node": "Get Items Lista", "type": "main", "index": 0}]]
+    },
+    "If Cancel Completar Item": {
+      "main": [
+        [{"node": "Get Items Lista", "type": "main", "index": 0}],
+        [{"node": "Send Error Completar Item", "type": "main", "index": 0}]
+      ]
+    },
+    "Format Items Eliminar": {
+      "main": [[{"node": "Send Items Eliminar", "type": "main", "index": 0}]]
+    },
+    "Send Items Eliminar": {
+      "main": [[{"node": "Update Session Eliminar", "type": "main", "index": 0}]]
+    },
+    "Logic Seleccion Eliminar Item": {
+      "main": [[{"node": "If Valid Eliminar Item", "type": "main", "index": 0}]]
+    },
+    "If Valid Eliminar Item": {
+      "main": [
+        [{"node": "Update Item Eliminado", "type": "main", "index": 0}],
+        [{"node": "If Cancel Eliminar Item", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Item Eliminado": {
+      "main": [[{"node": "Send Item Eliminado", "type": "main", "index": 0}]]
+    },
+    "Send Item Eliminado": {
+      "main": [[{"node": "Get Items Lista", "type": "main", "index": 0}]]
+    },
+    "If Cancel Eliminar Item": {
+      "main": [
+        [{"node": "Get Items Lista", "type": "main", "index": 0}],
+        [{"node": "Send Error Eliminar Item", "type": "main", "index": 0}]
       ]
     },
     "Send Reportes Menu": {
