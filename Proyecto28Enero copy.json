@@ -2603,7 +2603,7 @@
             "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
             "pantalla_actual": "recordatorio_editar_2",
             "paso_actual": "2",
-            "datos_parciales": "={{ JSON.stringify({id_habito: $json.id_habito, nombre: $json.nombre}) }}",
+            "datos_parciales": "={{ JSON.stringify({id_habito: $('Logic Seleccion Recordatorio').first().json.id_habito, nombre: $('Logic Seleccion Recordatorio').first().json.nombre}) }}",
             "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
           },
           "matchingColumns": ["telegram_user"]
