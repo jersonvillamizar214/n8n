@@ -1211,6 +1211,78 @@
               },
               "renameOutput": true,
               "outputKey": "tarea_eliminada_confirm"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "ver_habitos", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver_habitos"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "habito_eliminar_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habito_eliminar_1"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "habito_eliminado_confirm", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habito_eliminado_confirm"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "habito_crear_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habito_crear_1"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "habito_crear_2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habito_crear_2"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "habito_crear_3", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "habito_crear_3"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "recordatorio_editar_1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "recordatorio_editar_1"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2},
+                "conditions": [{"leftValue": "={{ $json.pantalla }}", "rightValue": "recordatorio_editar_2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "recordatorio_editar_2"
             }
           ]
         },
@@ -1731,7 +1803,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').item.json.chat_id }}",
-        "text": "HABITOS\n\n1. Crear\n2. Ver\n3. Pausar\n4. Reactivar\n5. Eliminar\n9. Volver",
+        "text": "HABITOS\n\n1. Crear habito\n2. Ver habitos\n3. Eliminar\n9. Volver",
         "additionalFields": {}
       },
       "id": "573ae914-f6b6-42d3-b38c-366173145d08",
@@ -1794,6 +1866,839 @@
           "name": "Google Sheets"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "1", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "crear"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "2", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ver"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "3", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "eliminar"
+            },
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').item.json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "habitos-menu-router-id",
+      "name": "Habitos Menu Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [880, -416]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Escribe el nombre del habito:\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-habito-paso1-id",
+      "name": "Send Habito Paso 1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1080, -560],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').item.json.telegram_user }}",
+            "pantalla_actual": "habito_crear_1",
+            "paso_actual": "1",
+            "datos_parciales": "{}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').item.json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-habito-paso1-id",
+      "name": "Update Habito Paso 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1280, -560],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "filtersUI": {"values": [{"lookupColumn": "estado", "lookupValue": "activo"}]},
+        "options": {}
+      },
+      "id": "get-habitos-activos-id",
+      "name": "Get Habitos Activos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1080, -416],
+      "alwaysOutputData": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.nombre) {\n  return [{json:{mensaje:'HABITOS:\\n\\nNo tienes habitos activos.\\n\\n9. Volver'}}];\n}\nlet t = 'HABITOS ACTIVOS:\\n\\n';\nfor (let i = 0; i < items.length; i++) {\n  const freq = items[i].json.frecuencia ? ' - ' + items[i].json.frecuencia : '';\n  const hora = items[i].json.hora_recordatorio ? ' - ' + items[i].json.hora_recordatorio : '';\n  t += (i+1)+'. '+items[i].json.nombre + freq + hora + '\\n';\n}\nreturn [{json:{mensaje:t+'\\n9. Volver'}}];"
+      },
+      "id": "format-habitos-activos-id",
+      "name": "Format Habitos Activos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, -416]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-habitos-activos-id",
+      "name": "Send Habitos Activos",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1480, -416],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "ver_habitos",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-ver-habitos-id",
+      "name": "Update Session Ver Habitos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1680, -416],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "ver-habitos-router-id",
+      "name": "Ver Habitos Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1880, -416]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-ver-habitos-id",
+      "name": "Send Invalid Ver Habitos",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2080, -336],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "filtersUI": {"values": [{"lookupColumn": "estado", "lookupValue": "activo"}]},
+        "options": {}
+      },
+      "id": "get-habitos-para-eliminar-id",
+      "name": "Get Habitos Para Eliminar",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1080, -272],
+      "alwaysOutputData": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.nombre) {\n  return [{json:{mensaje:'ELIMINAR HABITO:\\n\\nNo tienes habitos activos.\\n\\n9. Volver', list: []}}];\n}\nlet t = 'ELIMINAR HABITO:\\n\\nSelecciona el numero del habito a eliminar:\\n\\n';\nconst list = [];\nfor (let i = 0; i < items.length; i++) {\n  t += (i+1)+'. '+items[i].json.nombre + '\\n';\n  list.push({index: i+1, id_habito: items[i].json.id_habito, nombre: items[i].json.nombre});\n}\nreturn [{json:{mensaje:t+'\\n9. Volver', list: list}}];"
+      },
+      "id": "format-lista-eliminar-habitos-id",
+      "name": "Format Lista Eliminar Habitos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, -272]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-eliminar-habitos-id",
+      "name": "Send Lista Eliminar Habitos",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1480, -272],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "habito_eliminar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Eliminar Habitos').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-eliminar-habito-id",
+      "name": "Update Session Eliminar Habito",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1680, -272],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nconst listJson = $('Merge Session Data').first().json.datos_parciales || '[]';\nlet list = [];\ntry { list = JSON.parse(listJson); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }\n\nif (mensaje === '9') { return [{json: {valid: false, cancel: true}}]; }\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length || !list[index - 1]) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida. Escribe el numero o 9 para volver.'}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_habito: selected.id_habito, nombre: selected.nombre}}];"
+      },
+      "id": "logic-seleccion-eliminar-habito-id",
+      "name": "Logic Seleccion Eliminar Habito",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1880, -272]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.valid }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-eliminar-habito-id",
+      "name": "If Valid Eliminar Habito",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2080, -272]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {"id_habito": "={{ $json.id_habito }}", "estado": "eliminado"},
+          "matchingColumns": ["id_habito"]
+        },
+        "options": {}
+      },
+      "id": "update-habito-eliminado-id",
+      "name": "Update Habito Eliminado",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2280, -352],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=🗑️ Habito eliminado: {{ $('Logic Seleccion Eliminar Habito').first().json.nombre }}\n\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "send-habito-eliminado-id",
+      "name": "Send Habito Eliminado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2480, -352],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-eliminar-habito-id",
+      "name": "If Cancel Eliminar Habito",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2280, -192]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Eliminar Habito').first().json.error }}",
+        "additionalFields": {}
+      },
+      "id": "send-error-eliminar-habito-id",
+      "name": "Send Error Eliminar Habito",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2480, -112],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "habito_eliminado_confirm",
+            "paso_actual": "1",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-habito-eliminado-id",
+      "name": "Update Session Habito Eliminado",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2680, -352],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "loose"},
+                "conditions": [{"leftValue": "={{ $('Set Variables').first().json.mensaje }}", "rightValue": "9", "operator": {"type": "string", "operation": "equals"}}],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "volver"
+            }
+          ]
+        },
+        "options": {"fallbackOutput": "extra"}
+      },
+      "id": "habito-eliminado-router-id",
+      "name": "Habito Eliminado Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2880, -352]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Presiona 9 para volver.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-habito-eliminado-id",
+      "name": "Send Invalid Habito Eliminado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3080, -272],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').item.json.chat_id }}",
+        "text": "Opcion no valida en Habitos. Presiona 9 para volver.",
+        "additionalFields": {}
+      },
+      "id": "send-invalid-habitos-id",
+      "name": "Send Invalid Habitos",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1080, -128],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nif (mensaje === '9') { return [{json: {cancel: true}}]; }\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\ndatos.nombre = mensaje;\nreturn [{json: {cancel: false, datos_parciales: JSON.stringify(datos)}}];"
+      },
+      "id": "habito-crear-paso2-id",
+      "name": "Habito Crear Paso 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1480, -560]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-crear-habito-id",
+      "name": "If Cancel Crear Habito",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1680, -560]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Selecciona la frecuencia:\n\n1. Diario\n2. Semanal\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-habito-paso2-id",
+      "name": "Send Habito Paso 2",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1880, -640],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "habito_crear_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ $('Habito Crear Paso 2').first().json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-habito-paso2-id",
+      "name": "Update Habito Paso 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2080, -640],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nif (mensaje === '9') { return [{json: {cancel: true}}]; }\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nif (mensaje === '1') datos.frecuencia = 'diario';\nelse if (mensaje === '2') datos.frecuencia = 'semanal';\nelse { return [{json: {cancel: false, error: true}}]; }\nreturn [{json: {cancel: false, error: false, datos_parciales: JSON.stringify(datos)}}];"
+      },
+      "id": "habito-crear-paso3-id",
+      "name": "Habito Crear Paso 3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2280, -640]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-crear-habito2-id",
+      "name": "If Cancel Crear Habito 2",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2480, -640]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.error }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-error-frecuencia-id",
+      "name": "If Error Frecuencia",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2680, -720]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Opcion no valida. Escribe 1 (diario), 2 (semanal) o 9 para cancelar.",
+        "additionalFields": {}
+      },
+      "id": "send-error-frecuencia-id",
+      "name": "Send Error Frecuencia",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2880, -800],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "Escribe la hora del recordatorio (ej: 08:00):\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-habito-paso3-id",
+      "name": "Send Habito Paso 3",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2880, -640],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "habito_crear_3",
+            "paso_actual": "3",
+            "datos_parciales": "={{ $('Habito Crear Paso 3').first().json.datos_parciales }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-habito-paso3-id",
+      "name": "Update Habito Paso 3",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3080, -640],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nif (mensaje === '9') { return [{json: {cancel: true}}]; }\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\ndatos.hora_recordatorio = mensaje;\nconst id_habito = 'HAB-' + Date.now();\nreturn [{json: {cancel: false, id_habito: id_habito, nombre: datos.nombre, frecuencia: datos.frecuencia, hora_recordatorio: datos.hora_recordatorio, estado: 'activo'}}];"
+      },
+      "id": "guardar-habito-id",
+      "name": "Guardar Habito",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3280, -640]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-crear-habito3-id",
+      "name": "If Cancel Crear Habito 3",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [3480, -640]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id_habito": "={{ $json.id_habito }}",
+            "nombre": "={{ $json.nombre }}",
+            "frecuencia": "={{ $json.frecuencia }}",
+            "hora_recordatorio": "={{ $json.hora_recordatorio }}",
+            "estado": "={{ $json.estado }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {"id": "id_habito", "displayName": "id_habito", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "nombre", "displayName": "nombre", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "frecuencia", "displayName": "frecuencia", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "hora_recordatorio", "displayName": "hora_recordatorio", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true},
+            {"id": "estado", "displayName": "estado", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true}
+          ]
+        },
+        "options": {}
+      },
+      "id": "insert-habito-id",
+      "name": "Insert Habito",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [3680, -720],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✅ Habito creado: {{ $('Guardar Habito').first().json.nombre }}\nFrecuencia: {{ $('Guardar Habito').first().json.frecuencia }}\nRecordatorio: {{ $('Guardar Habito').first().json.hora_recordatorio }}\n\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "send-habito-creado-id",
+      "name": "Send Habito Creado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [3880, -720],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "filtersUI": {"values": [{"lookupColumn": "estado", "lookupValue": "activo"}]},
+        "options": {}
+      },
+      "id": "get-habitos-recordatorio-id",
+      "name": "Get Habitos Recordatorio",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [320, -608],
+      "alwaysOutputData": true,
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (!items.length || !items[0].json.nombre) {\n  return [{json:{mensaje:'RECORDATORIOS:\\n\\nNo tienes habitos para configurar.\\n\\n9. Volver', list: []}}];\n}\nlet t = 'RECORDATORIOS:\\n\\nSelecciona un habito para cambiar su hora:\\n\\n';\nconst list = [];\nfor (let i = 0; i < items.length; i++) {\n  const hora = items[i].json.hora_recordatorio || 'sin hora';\n  t += (i+1)+'. '+items[i].json.nombre + ' - ' + hora + '\\n';\n  list.push({index: i+1, id_habito: items[i].json.id_habito, nombre: items[i].json.nombre});\n}\nreturn [{json:{mensaje:t+'\\n9. Volver', list: list}}];"
+      },
+      "id": "format-lista-recordatorios-id",
+      "name": "Format Lista Recordatorios",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, -608]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {}
+      },
+      "id": "send-lista-recordatorios-id",
+      "name": "Send Lista Recordatorios",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [720, -608],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "recordatorio_editar_1",
+            "paso_actual": "1",
+            "datos_parciales": "={{ JSON.stringify($('Format Lista Recordatorios').first().json.list) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-recordatorio-id",
+      "name": "Update Session Recordatorio",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [920, -608],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nconst listJson = $('Merge Session Data').first().json.datos_parciales || '[]';\nlet list = [];\ntry { list = JSON.parse(listJson); if (!Array.isArray(list)) list = []; } catch(e) { list = []; }\n\nif (mensaje === '9') { return [{json: {valid: false, cancel: true}}]; }\n\nconst index = parseInt(mensaje);\nif (isNaN(index) || index < 1 || index > list.length || !list[index - 1]) {\n  return [{json: {valid: false, cancel: false, error: 'Seleccion no valida.'}}];\n}\n\nconst selected = list[index - 1];\nreturn [{json: {valid: true, id_habito: selected.id_habito, nombre: selected.nombre}}];"
+      },
+      "id": "logic-seleccion-recordatorio-id",
+      "name": "Logic Seleccion Recordatorio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, -608]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.valid }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-valid-recordatorio-id",
+      "name": "If Valid Recordatorio",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1320, -608]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=Escribe la nueva hora para {{ $json.nombre }} (ej: 08:00):\n\n9. Cancelar",
+        "additionalFields": {}
+      },
+      "id": "send-pedir-hora-id",
+      "name": "Send Pedir Hora",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1520, -688],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 319260215, "cachedResultName": "SESSIONS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_user": "={{ $('Set Variables').first().json.telegram_user }}",
+            "pantalla_actual": "recordatorio_editar_2",
+            "paso_actual": "2",
+            "datos_parciales": "={{ JSON.stringify({id_habito: $json.id_habito, nombre: $json.nombre}) }}",
+            "timestamp_ultima_interaccion": "={{ $('Set Variables').first().json.timestamp }}"
+          },
+          "matchingColumns": ["telegram_user"]
+        },
+        "options": {}
+      },
+      "id": "update-session-recordatorio2-id",
+      "name": "Update Session Recordatorio 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1720, -688],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-recordatorio-id",
+      "name": "If Cancel Recordatorio",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1520, -528]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "={{ $('Logic Seleccion Recordatorio').first().json.error }}\n\n9. Volver",
+        "additionalFields": {}
+      },
+      "id": "send-error-recordatorio-id",
+      "name": "Send Error Recordatorio",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1720, -448],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
+    },
+    {
+      "parameters": {
+        "jsCode": "const mensaje = $('Set Variables').first().json.mensaje;\nif (mensaje === '9') { return [{json: {cancel: true}}]; }\nconst datos = JSON.parse($('Merge Session Data').first().json.datos_parciales || '{}');\nreturn [{json: {cancel: false, id_habito: datos.id_habito, nombre: datos.nombre, hora_recordatorio: mensaje}}];"
+      },
+      "id": "guardar-hora-recordatorio-id",
+      "name": "Guardar Hora Recordatorio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1920, -688]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "leftValue": "", "typeValidation": "strict"},
+          "conditions": [{"leftValue": "={{ $json.cancel }}", "rightValue": true, "operator": {"type": "boolean", "operation": "equals"}}],
+          "combinator": "and"
+        }
+      },
+      "id": "if-cancel-guardar-hora-id",
+      "name": "If Cancel Guardar Hora",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2120, -688]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {"__rl": true, "mode": "id", "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"},
+        "sheetName": {"__rl": true, "mode": "list", "value": 563773723, "cachedResultName": "HABITOS"},
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {"id_habito": "={{ $json.id_habito }}", "hora_recordatorio": "={{ $json.hora_recordatorio }}"},
+          "matchingColumns": ["id_habito"]
+        },
+        "options": {}
+      },
+      "id": "update-hora-habito-id",
+      "name": "Update Hora Habito",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2320, -768],
+      "credentials": {"googleSheetsOAuth2Api": {"id": "7vyPJQZk6BBHxLdg", "name": "Google Sheets"}}
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Set Variables').first().json.chat_id }}",
+        "text": "=✅ Hora actualizada para {{ $('Guardar Hora Recordatorio').first().json.nombre }}: {{ $('Guardar Hora Recordatorio').first().json.hora_recordatorio }}\n\n9. Volver al menu",
+        "additionalFields": {}
+      },
+      "id": "send-hora-actualizada-id",
+      "name": "Send Hora Actualizada",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2520, -768],
+      "credentials": {"telegramApi": {"id": "lE2p4THg4uaP8Pzj", "name": "Telegram Bot"}}
     },
     {
       "parameters": {
@@ -7405,7 +8310,7 @@
         ],
         [
           {
-            "node": "Send Invalid Option",
+            "node": "Habitos Menu Router",
             "type": "main",
             "index": 0
           }
@@ -7528,7 +8433,15 @@
             "type": "main",
             "index": 0
           }
-        ]
+        ],
+        [{"node": "Ver Habitos Router", "type": "main", "index": 0}],
+        [{"node": "Logic Seleccion Eliminar Habito", "type": "main", "index": 0}],
+        [{"node": "Habito Eliminado Router", "type": "main", "index": 0}],
+        [{"node": "Habito Crear Paso 2", "type": "main", "index": 0}],
+        [{"node": "Habito Crear Paso 3", "type": "main", "index": 0}],
+        [{"node": "Guardar Habito", "type": "main", "index": 0}],
+        [{"node": "Logic Seleccion Recordatorio", "type": "main", "index": 0}],
+        [{"node": "Guardar Hora Recordatorio", "type": "main", "index": 0}]
       ]
     },
     "Consultar Router": {
@@ -7603,7 +8516,7 @@
         ],
         [
           {
-            "node": "Send Recordatorios Menu",
+            "node": "Get Habitos Recordatorio",
             "type": "main",
             "index": 0
           }
@@ -7695,6 +8608,150 @@
           }
         ]
       ]
+    },
+    "Update to Habitos": {
+      "main": [[]]
+    },
+    "Habitos Menu Router": {
+      "main": [
+        [{"node": "Send Habito Paso 1", "type": "main", "index": 0}],
+        [{"node": "Get Habitos Activos", "type": "main", "index": 0}],
+        [{"node": "Get Habitos Para Eliminar", "type": "main", "index": 0}],
+        [{"node": "Check Rol Para Menu", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Habitos", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Habito Paso 1": {
+      "main": [[{"node": "Update Habito Paso 1", "type": "main", "index": 0}]]
+    },
+    "Get Habitos Activos": {
+      "main": [[{"node": "Format Habitos Activos", "type": "main", "index": 0}]]
+    },
+    "Format Habitos Activos": {
+      "main": [[{"node": "Send Habitos Activos", "type": "main", "index": 0}]]
+    },
+    "Send Habitos Activos": {
+      "main": [[{"node": "Update Session Ver Habitos", "type": "main", "index": 0}]]
+    },
+    "Ver Habitos Router": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Ver Habitos", "type": "main", "index": 0}]
+      ]
+    },
+    "Get Habitos Para Eliminar": {
+      "main": [[{"node": "Format Lista Eliminar Habitos", "type": "main", "index": 0}]]
+    },
+    "Format Lista Eliminar Habitos": {
+      "main": [[{"node": "Send Lista Eliminar Habitos", "type": "main", "index": 0}]]
+    },
+    "Send Lista Eliminar Habitos": {
+      "main": [[{"node": "Update Session Eliminar Habito", "type": "main", "index": 0}]]
+    },
+    "Logic Seleccion Eliminar Habito": {
+      "main": [[{"node": "If Valid Eliminar Habito", "type": "main", "index": 0}]]
+    },
+    "If Valid Eliminar Habito": {
+      "main": [
+        [{"node": "Update Habito Eliminado", "type": "main", "index": 0}],
+        [{"node": "If Cancel Eliminar Habito", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Habito Eliminado": {
+      "main": [[{"node": "Send Habito Eliminado", "type": "main", "index": 0}]]
+    },
+    "Send Habito Eliminado": {
+      "main": [[{"node": "Update Session Habito Eliminado", "type": "main", "index": 0}]]
+    },
+    "If Cancel Eliminar Habito": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Send Error Eliminar Habito", "type": "main", "index": 0}]
+      ]
+    },
+    "Habito Eliminado Router": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Send Invalid Habito Eliminado", "type": "main", "index": 0}]
+      ]
+    },
+    "Habito Crear Paso 2": {
+      "main": [[{"node": "If Cancel Crear Habito", "type": "main", "index": 0}]]
+    },
+    "If Cancel Crear Habito": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Send Habito Paso 2", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Habito Paso 2": {
+      "main": [[{"node": "Update Habito Paso 2", "type": "main", "index": 0}]]
+    },
+    "Habito Crear Paso 3": {
+      "main": [[{"node": "If Cancel Crear Habito 2", "type": "main", "index": 0}]]
+    },
+    "If Cancel Crear Habito 2": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Send Habito Paso 3", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Habito Paso 3": {
+      "main": [[{"node": "Update Habito Paso 3", "type": "main", "index": 0}]]
+    },
+    "Guardar Habito": {
+      "main": [[{"node": "If Cancel Crear Habito 3", "type": "main", "index": 0}]]
+    },
+    "If Cancel Crear Habito 3": {
+      "main": [
+        [{"node": "Send Habitos Menu", "type": "main", "index": 0}],
+        [{"node": "Insert Habito", "type": "main", "index": 0}]
+      ]
+    },
+    "Insert Habito": {
+      "main": [[{"node": "Send Habito Creado", "type": "main", "index": 0}]]
+    },
+    "Get Habitos Recordatorio": {
+      "main": [[{"node": "Format Lista Recordatorios", "type": "main", "index": 0}]]
+    },
+    "Format Lista Recordatorios": {
+      "main": [[{"node": "Send Lista Recordatorios", "type": "main", "index": 0}]]
+    },
+    "Send Lista Recordatorios": {
+      "main": [[{"node": "Update Session Recordatorio", "type": "main", "index": 0}]]
+    },
+    "Logic Seleccion Recordatorio": {
+      "main": [[{"node": "If Valid Recordatorio", "type": "main", "index": 0}]]
+    },
+    "If Valid Recordatorio": {
+      "main": [
+        [{"node": "Send Pedir Hora", "type": "main", "index": 0}],
+        [{"node": "If Cancel Recordatorio", "type": "main", "index": 0}]
+      ]
+    },
+    "Send Pedir Hora": {
+      "main": [[{"node": "Update Session Recordatorio 2", "type": "main", "index": 0}]]
+    },
+    "If Cancel Recordatorio": {
+      "main": [
+        [{"node": "Check Rol Para Menu", "type": "main", "index": 0}],
+        [{"node": "Send Error Recordatorio", "type": "main", "index": 0}]
+      ]
+    },
+    "Guardar Hora Recordatorio": {
+      "main": [[{"node": "If Cancel Guardar Hora", "type": "main", "index": 0}]]
+    },
+    "If Cancel Guardar Hora": {
+      "main": [
+        [{"node": "Check Rol Para Menu", "type": "main", "index": 0}],
+        [{"node": "Update Hora Habito", "type": "main", "index": 0}]
+      ]
+    },
+    "Update Hora Habito": {
+      "main": [[{"node": "Send Hora Actualizada", "type": "main", "index": 0}]]
+    },
+    "Send Hora Actualizada": {
+      "main": [[{"node": "Check Rol Para Menu", "type": "main", "index": 0}]]
     },
     "Send Listas Menu": {
       "main": [
