@@ -2690,7 +2690,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Set Variables').first().json.chat_id }}",
-        "text": "=✅ Hora actualizada para {{ $('Guardar Hora Recordatorio').first().json.nombre }}: {{ $('Guardar Hora Recordatorio').first().json.hora_recordatorio }}\n\n9. Volver al menu",
+        "text": "=✅ Hora actualizada para {{ $('Guardar Hora Recordatorio').first().json.nombre }}: {{ $('Guardar Hora Recordatorio').first().json.hora_recordatorio }}\n\nVolviendo al menú",
         "additionalFields": {}
       },
       "id": "send-hora-actualizada-id",
