@@ -3187,7 +3187,8 @@
             "nombre": "={{ $json.nombre }}",
             "frecuencia": "={{ $json.frecuencia }}",
             "hora_recordatorio": "={{ $json.hora_recordatorio }}",
-            "estado": "={{ $json.estado }}"
+            "estado": "={{ $json.estado }}",
+            "creado_por": "={{ $('Set Variables').first().json.telegram_user }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -3230,6 +3231,15 @@
             {
               "id": "estado",
               "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "creado_por",
+              "displayName": "creado_por",
               "required": false,
               "defaultMatch": false,
               "display": true,
