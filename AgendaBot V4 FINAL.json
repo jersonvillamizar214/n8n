@@ -7037,7 +7037,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const fecha = $('Set Variables').first().json.mensaje;\nconst regex = /^\\d{4}-\\d{2}-\\d{2}$/;\n\nif (!regex.test(fecha)) {\n  return { json: { valid: false, error: 'Formato incorrecto. Usa YYYY-MM-DD', fecha } };\n}\n\nconst fechaIngresada = new Date(fecha + 'T00:00:00');\nconst hoy = new Date();\nhoy.setHours(0, 0, 0, 0);\n\nif (fechaIngresada < hoy) {\n  return { json: { valid: false, error: 'No puedes agendar en una fecha pasada.', fecha } };\n}\n\nreturn { json: { valid: true, fecha } };"
+        "jsCode": "const fecha = $('Set Variables').first().json.mensaje;\nconst regex = /^\\d{4}-\\d{2}-\\d{2}$/;\n\nif (!regex.test(fecha)) {\n  return { json: { valid: false, error: 'Formato incorrecto. Usa YYYY-MM-DD', fecha } };\n}\n\nconst parts = fecha.split('-');\nconst year = parseInt(parts[0]);\nconst month = parseInt(parts[1]) - 1;\nconst day = parseInt(parts[2]);\nconst d = new Date(year, month, day);\n\nif (d.getFullYear() !== year || d.getMonth() !== month || d.getDate() !== day) {\n  return { json: { valid: false, error: 'La fecha ingresada no existe.', fecha } };\n}\n\nconst hoy = new Date();\nhoy.setHours(0, 0, 0, 0);\nif (d < hoy) {\n  return { json: { valid: false, error: 'No puedes agendar en una fecha pasada.', fecha } };\n}\n\nreturn { json: { valid: true, fecha } };"
       },
       "id": "65951416-b1d9-4041-a184-476cbbff48bd",
       "name": "Validar Fecha",
@@ -7237,7 +7237,7 @@
           "conditions": [
             {
               "leftValue": "={{ $('Set Variables').item.json.mensaje }}",
-              "rightValue": "^\\d{2}:\\d{2}$",
+              "rightValue": "^([01]\\d|2[0-3]):[0-5]\\d$",
               "operator": {
                 "type": "string",
                 "operation": "regex"
