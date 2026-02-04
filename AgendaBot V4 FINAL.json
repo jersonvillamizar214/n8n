@@ -12942,7 +12942,39 @@
     },
     {
       "parameters": {
-        "jsCode": "const citas = $(\"Get All Citas (Full)\").all();\nconst tareas = $(\"Get All Tareas (Full)\").all();\nconst logs = $(\"Get All Logs (Full)\").all();\n\nlet usuarios = {};\n\nfunction initUser(username) {\n  const userKey = String(username);\n  if (!usuarios[userKey]) {\n    usuarios[userKey] = {\n      telegram_user: userKey,\n      total_citas: 0,\n      citas_completadas: 0,\n      citas_canceladas: 0,\n      total_tareas: 0,\n      tareas_completadas: 0,\n      tareas_pendientes: 0,\n      interacciones: 0\n    };\n  }\n  return userKey;\n}\n\nlogs.forEach(l => {\n  const user = l.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].interacciones++;\n});\n\ncitas.forEach(c => {\n  const user = c.json.creado_por || c.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].total_citas++;\n  if (c.json.estado === 'completada') usuarios[key].citas_completadas++;\n  if (c.json.estado === 'cancelada') usuarios[key].citas_canceladas++;\n});\n\ntareas.forEach(t => {\n  const user = t.json.creado_por || t.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].total_tareas++;\n  if (t.json.estado === 'completada') usuarios[key].tareas_completadas++;\n  if (t.json.estado === 'pendiente') usuarios[key].tareas_pendientes++;\n});\n\nlet listaUsuarios = Object.values(usuarios).sort((a, b) => \n  String(a.telegram_user).localeCompare(String(b.telegram_user))\n);\n\nlet totalCitas = citas.length;\nlet totalTareas = tareas.length;\nlet totalInteracciones = logs.length;\n\nlet masActivo = listaUsuarios.reduce((prev, current) => \n  (prev.interacciones > current.interacciones) ? prev : current\n, {telegram_user: 'N/A', interacciones: 0});\n\nreturn {\n  resumen: {\n    usuario_mas_activo: masActivo.telegram_user,\n    total_citas_registradas: totalCitas,\n    total_tareas_registradas: totalTareas,\n    total_interacciones_bot: totalInteracciones\n  },\n  detalle: listaUsuarios\n};"
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "196K9mqVfhN8JUFpZfrvXQftcrTnQxOCqiUU_aB6I52Q"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1513010529,
+          "cachedResultName": "USUARIOS"
+        },
+        "options": {}
+      },
+      "id": "prod-report-get-usuarios",
+      "name": "Get All Usuarios (Full)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -101536,
+        161088
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "fZ7jIZOfX6ts7GKS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const citas = $(\"Get All Citas (Full)\").all();\nconst tareas = $(\"Get All Tareas (Full)\").all();\nconst logs = $(\"Get All Logs (Full)\").all();\nconst usersFull = $(\"Get All Usuarios (Full)\").all();\n\nlet userMap = {};\nusersFull.forEach(u => {\n  if (u.json.telegram_user) {\n    userMap[String(u.json.telegram_user)] = u.json.nombre;\n  }\n});\n\nlet usuarios = {};\n\nfunction initUser(username) {\n  const userKey = String(username);\n  if (!usuarios[userKey]) {\n    usuarios[userKey] = {\n      telegram_user: userKey,\n      nombre: userMap[userKey] || null,\n      total_citas: 0,\n      citas_completadas: 0,\n      citas_canceladas: 0,\n      total_tareas: 0,\n      tareas_completadas: 0,\n      tareas_pendientes: 0,\n      interacciones: 0\n    };\n  }\n  return userKey;\n}\n\nlogs.forEach(l => {\n  const user = l.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].interacciones++;\n});\n\ncitas.forEach(c => {\n  const user = c.json.creado_por || c.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].total_citas++;\n  if (c.json.estado === 'completada') usuarios[key].citas_completadas++;\n  if (c.json.estado === 'cancelada') usuarios[key].citas_canceladas++;\n});\n\ntareas.forEach(t => {\n  const user = t.json.creado_por || t.json.telegram_user;\n  if (!user) return;\n  const key = initUser(user);\n  usuarios[key].total_tareas++;\n  if (t.json.estado === 'completada') usuarios[key].tareas_completadas++;\n  if (t.json.estado === 'pendiente') usuarios[key].tareas_pendientes++;\n});\n\nlet listaUsuarios = Object.values(usuarios).sort((a, b) => \n  String(a.telegram_user).localeCompare(String(b.telegram_user))\n);\n\nlet totalCitas = citas.length;\nlet totalTareas = tareas.length;\nlet totalInteracciones = logs.length;\n\nlet masActivo = listaUsuarios.reduce((prev, current) => \n  (prev.interacciones > current.interacciones) ? prev : current\n, {telegram_user: 'N/A', interacciones: 0});\n\nreturn {\n  resumen: {\n    usuario_mas_activo: masActivo.telegram_user,\n    nombre_mas_activo: masActivo.nombre,\n    total_citas_registradas: totalCitas,\n    total_tareas_registradas: totalTareas,\n    total_interacciones_bot: totalInteracciones\n  },\n  detalle: listaUsuarios\n};"
       },
       "id": "prod-report-logic",
       "name": "Calculate Productivity Metrics",
@@ -12955,7 +12987,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const { resumen, detalle } = $json;\n\nlet msg = '📊 Reporte de productividad (AgendaBot)\\n\\n';\nmsg += 'Resumen general\\n';\nmsg += `- Usuario más activo: ${isNaN(resumen.usuario_mas_activo) ? '@' + resumen.usuario_mas_activo : 'ID ' + resumen.usuario_mas_activo}\\n`;\nmsg += `- Total citas registradas: ${resumen.total_citas_registradas}\\n`;\nmsg += `- Total tareas registradas: ${resumen.total_tareas_registradas}\\n`;\nmsg += `- Total interacciones con el bot: ${resumen.total_interacciones_bot}\\n\\n`;\n\nmsg += 'Detalle por usuario\\n';\ndetalle.forEach((u, i) => {\n  const userDisp = isNaN(u.telegram_user) ? `@${u.telegram_user}` : `ID: ${u.telegram_user}`;\n  msg += `${i + 1}) ${userDisp}\\n`;\n  msg += `   - Citas: ${u.total_citas} (Completadas: ${u.citas_completadas} | Canceladas: ${u.citas_canceladas})\\n`;\n  msg += `   - Tareas: ${u.total_total_tareas || u.total_tareas} (Hechas: ${u.tareas_completadas} | Pendientes: ${u.tareas_pendientes})\\n`;\n  msg += `   - Interacciones: ${u.interacciones}\\n\\n`;\n});\n\nreturn { mensaje: msg };"
+        "jsCode": "const { resumen, detalle } = $json;\n\nlet msg = '📊 Reporte de productividad (AgendaBot)\\n\\n';\nmsg += 'Resumen general\\n';\n\nfunction getDisplay(userId, name) {\n  if (name) return name;\n  return isNaN(userId) ? `@${userId}` : `ID: ${userId}`;\n}\n\nmsg += `- Usuario más activo: ${getDisplay(resumen.usuario_mas_activo, resumen.nombre_mas_activo)}\\n`;\nmsg += `- Total citas registradas: ${resumen.total_citas_registradas}\\n`;\nmsg += `- Total tareas registradas: ${resumen.total_tareas_registradas}\\n`;\nmsg += `- Total interacciones con el bot: ${resumen.total_interacciones_bot}\\n\\n`;\n\nmsg += 'Detalle por usuario\\n';\ndetalle.forEach((u, i) => {\n  const userDisp = getDisplay(u.telegram_user, u.nombre);\n  msg += `${i + 1}) ${userDisp}\\n`;\n  msg += `   - Citas: ${u.total_citas} (Completadas: ${u.citas_completadas} | Canceladas: ${u.citas_canceladas})\\n`;\n  msg += `   - Tareas: ${u.total_total_tareas || u.total_tareas} (Hechas: ${u.tareas_completadas} | Pendientes: ${u.tareas_pendientes})\\n`;\n  msg += `   - Interacciones: ${u.interacciones}\\n\\n`;\n});\n\nreturn { mensaje: msg };"
       },
       "id": "prod-report-format",
       "name": "Format Productivity Report",
@@ -15055,6 +15087,17 @@
       ]
     },
     "Get All Logs (Full)": {
+      "main": [
+        [
+          {
+            "node": "Get All Usuarios (Full)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Usuarios (Full)": {
       "main": [
         [
           {
